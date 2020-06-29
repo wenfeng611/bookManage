@@ -1,0 +1,50 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bookmanage?useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password:
+  freemarker:
+     cache: false
+     check-template-location: true
+     settings:
+       output_format: HTMLOutputFormat
+       template_update_delay: 0
+       default_encoding: utf-8
+       url_escaping_charset: utf-8
+       classic_compatible: true
+       number_format: 0
+     content-type: text/html
+     allow-request-override: false
+     allow-session-override: false
+     prefer-file-system-access: true
+     expose-session-attributes: false
+     expose-request-attributes: false
+     expose-spring-macro-helpers: false
+     suffix: .html
+     template-loader-path: classpath:/templates/
+     order: 1
+#    druid:
+#      initial-size: 10
+#      min-idle: 10
+#      max-active: 40
+#  jackson:
+#    deserialization.: true
+#    serialization.: true
+#    date-format: 'yyyy-MM-dd HH:mm:ss'
+#    time-zone: 'Asia/Shanghai'
+
+
+#  profiles:
+#    active: @active.spring.profile@
+
+server:
+   port: 8080
+management:
+   security:
+     enabled: true
+
+#quartz:
+#  enabled: true
+
+

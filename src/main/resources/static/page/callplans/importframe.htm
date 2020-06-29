@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="viewport"
+          content="width=device-width, maximum-scale=1.0, initial-scale=1.0,initial-scale=1.0,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>科天云客服</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?t=1487250759056"/>
+    <link rel="stylesheet" href="/css/flexboxgrid.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/darktooltip.css" />
+    <link rel="stylesheet" href="/assets/vendor/layui/v1/css/layui.css">
+    <link rel="stylesheet" href="/res/css.html"/>
+</head>
+<body>
+<div class="uk-layui-form">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">选择文件：</label>
+            <div class="layui-input-inline">
+                <input type="file" name="excel-file" lay-type="file" lay-title="点击上传Excel文件" class="layui-upload-file">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/jquery-1.10.2.min.js"></script>
+<script src="/js/jquery.form.js"></script>
+<script src="/assets/vendor/layui/v1/layui.js"></script>
+<script src="/js/ukefu.js"></script>
+<script>
+$(function(){
+    console.log(" import tasks!");
+    var thisParent = top.window.frm_callplans;
+    layui.use(['upload', 'layer', 'form', 'element' ], function () {
+        var form = layui.form();
+        form.render();
+        var element = layui.element();
+        element.init();
+
+        var layer = layui.layer;
+        layui.upload({
+            url : '/restapi/callplans/' + thisParent.planid + '/calltasks/uploadexcel',
+            ext : 'xls|xlsx',
+            title : '请选择Excel文件',
+            elem: "input[name=excel-file]",
+            success : function(res, input) {
+
+                thisParent.planListTable.fnDraw();
+                top.layer.msg(res.msg);
+                top.layer.close(top.layerwin);
+
+            }
+        });
+    });
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<div class="uk-layui-form">
+    <table id="dt_basic" class="table table-striped table-bordered table-hover" width="100%">
+        <input type="hidden" name="planid" id="planid" value="">
+        <thead></thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+
+    var planid = "";
+    var planStatus = {draft:0, submit:1,end:2};
+    var callplans = [];
+
+    var initOperateIconAction = function () {
+        var table = $('#dt_basic');
+        table.delegate('dd a[type]', 'click', function () {
+            root.Console.log("submit task");
+
+            var _this = $(this);
+            var _name = $(_this.parents('tr')).find('td:eq(1)').html();
+            var _id = _this.attr('planid');
+            var _type = _this.attr('type');
+
+            if(_type == 'submit') {
+                layer.confirm('确认提交计划 【<strong>' + _name + '</strong>】?', function (index) {
+                    //do something
+                    var postData = {};
+                    $.get("/restapi/callplans/" + _id + "/launch", postData, function (data) {
+                        planListTable.fnDraw();
+                    }).done(function (data) {
+                        //log('done');
+                    }).fail(function (data) {
+                        if (data.status === 403) {
+                            root.Console.log("current request need login!");
+                        }
+                    }).always(function () {
+                        layer.close(index);
+                    });
+
+                });
+            }else if(_type == 'delete'){
+                layer.confirm('确认删除计划 【<strong>' + _name + '</strong>】?', function (index) {
+                    //do something
+                    var postData = {};
+                    $.get("/restapi/callplans/" + _id + "/delete", postData, function (data) {
+                        planListTable.fnDraw();
+                    }).done(function (data) {
+                        //log('done');
+                    }).fail(function (data) {
+                        if (data.status === 403) {
+                            root.Console.log("current request need login!");
+                        }
+                    }).always(function () {
+                        layer.close(index);
+                    });
+
+                });
+            }
+        });
+    };
+
+    var pagefunction = function () {
+
+        planListTable = commonDataTable({
+            "columns": [
+                {title: "编号", data: "planno"},
+                {title: "计划名称", data: "name",},
+                {
+                    title: "任务类型", data: "tasktype", render: function (data, type, full) {
+                    var currentType = "未知";
+                    if (data == 0) {
+                        currentType = "自动外呼";
+                    } else if (data == 1) {
+                        currentType = "语音外呼";
+                    } else if (data == 2) {
+                        currentType = "点击外呼";
+                    }
+
+                    return currentType;
+                }
+                },
+                {
+                    title: "控制类型", data: "controltype", render: function (data, type, full) {
+                    var currentType = "未知";
+                    if (data == 0) {
+                        currentType = "标准外呼";
+                    } else if (data == 1) {
+                        currentType = "智能外呼";
+                    }
+
+                    return currentType;
+                }
+                },
+                {
+                    title: "任务状态", data: "status", render: function (data, type, full) {
+                    var currentStatus = "未知";
+                    if (data == 0) {
+                        currentStatus = "制定中";
+                    } else if (data == 1) {
+                        currentStatus = "就绪";
+                    } else if (data == 2) {
+                        currentStatus = "已结束";
+                    }
+
+                    return currentStatus;
+                }
+                },
+
+                {title: "总任务", data: "totaltask"},
+                {title: "待分配", data: "unassignedtasks"},
+                {title: "已完成", data: "completedtask",},
+                {title: "创建日期", data: "createtime",},
+                {
+                    title: "操作", data: "id", render: function (data, type, full) {
+                    var operateStr = '';
+                    if (full.status != planStatus.end) { // 0，制定中， 1：实施中，2： 已完成
+                        // href="/page/callplans/add.htm" title="新建计划" data-toggle="ajax" data-width="800"
+                        operateStr += '<dd><a href="/page/callplans/import.htm" title="导入任务" data-toggle="ajax" data-width="950" data-height="600" onclick="planid = \'' + data + '\';"><i class="layui-icon" title="导入任务">&#xe608;</i></a></dd>';
+                    }
+
+                    if (full.status == planStatus.draft) {
+                        operateStr += '<dd><a title="提交计划" type="submit" planid="' + full.id + '"><i class="layui-icon" title="提交计划">&#xe623;</i></a></dd>';
+                    }
+
+                    if(full.unassignedtasks && full.unassignedtasks > 0 && full.status == planStatus.submit){
+                        operateStr += '<dd><a href="/page/callplans/assign.htm" title="人员分配" data-toggle="ajax" data-width="950" data-height="620" onclick="planid = \'' + data + '\';"><i class="layui-icon"  title="人员分配">&#xe613;</i></a></dd>';
+                    }
+
+                    if(full.unassignedtasks > 0 || full.assingedtask > 0){
+                        operateStr += '<dd><a href="/page/callplans/task.htm" title="计划明细" data-toggle="ajax" data-width="950" data-height="620" onclick="planid = \'' + data + '\';"><i class="ktyfont"  title="查看明细">&#xe900;</i></a></dd>';
+                    }
+
+                    if (full.status != planStatus.end) {
+                        operateStr += '<dd><a href="/page/callplans/edit.htm" title="编辑计划" data-toggle="ajax" data-width="950" data-height="620" onclick="planid = \'' + data + '\';"><i class="layui-icon" title="编辑计划">&#xe642;</i></a></dd>';
+                    }
+                    if(full.status != planStatus.submit){
+                        operateStr += '<dd><a type="delete" title="删除计划" planid="' + full.id + '"><i class="layui-icon" title="删除计划">&#xe640;</i></a></dd>';
+                    }
+
+                    return ['<dl>', operateStr, '</dl>'].join('');
+                }
+                },
+            ],
+
+            "fnServerData": function (sSource, aoData, fnCallback) {
+
+                var start = 0;
+                var length = 10;
+                var columns = null;
+                var sEcho = 1;
+                var order = [];
+                $.each(aoData, function (i, item) {
+                    var name = item['name'];
+                    var value = item['value'];
+                    if (name == "start") {
+                        start = value;
+                    } else if (name == 'length') {
+                        length = value;
+                    } else if (name == 'draw') {
+                        sEcho = value;
+                    } else if (name == 'order') {
+                        order = value;
+                    } else if (name == 'columns') {
+                        columns = value;
+                    }
+                });
+
+                var orderby = columns[order[0].column].data;
+                var direction = order[0].dir;
+
+                var postData = {};
+                $.each($('#search-form input'), function (i, item) {
+                    var thisObj = $(this);
+                    postData[thisObj.attr("name")] = thisObj.val();
+                });
+                postData.orderby = orderby ? orderby : "createtime";
+                postData.direction = direction ? direction : "desc";
+                postData.ps = length ? length : 20;
+                postData.p = 1 + (start ? start / postData.ps : 0);
+                postData.q = $('#search-q').val();
+
+                root.Console.log(postData);
+                $.get("/restapi/callplans", postData, function (data) {
+                    var content = data;
+                    if (!content) {
+                        content = {paging: {count: 0, limit: 10, offset: 0}};
+                    }
+                    callplans = content.datas;
+                    content['sEcho'] = sEcho;
+                    content['iDisplayStart'] = content.paging.offset;
+                    content['iDisplayLength'] = content.paging.limit;
+                    content['iTotalRecords'] = content.paging.count;
+                    content['iTotalDisplayRecords'] = content.paging.count;
+                    content['sortField'] = orderby; //"createTime";
+                    content['sortType'] = direction;
+                    $('h1.site-h1').html('服务历史(' + content['iTotalDisplayRecords'] + ')');
+                    fnCallback(content);
+                }).done(function (data) {
+                    //log('done');
+                }).fail(function (data) {
+                    if (data.status === 403) {
+                        root.Console.log("current request need login!");
+                    }
+                }).always(function () {
+                    //log('always');
+                });
+            },
+            "orderby": "createtime",
+            "table": $('#dt_basic'),
+        });
+
+        initOperateIconAction();
+    };
+
+    $(pagefunction);
+</script>

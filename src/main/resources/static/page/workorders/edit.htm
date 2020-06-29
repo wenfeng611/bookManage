@@ -1,0 +1,385 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0, initial-scale=1.0,initial-scale=1.0,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>科天云客服</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?t=1487250759056">
+    <link rel="stylesheet" href="/js/select/css/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="/js/kindeditor/themes/default/default.css">
+    <link rel="stylesheet" href="/css/flexboxgrid.min.css">
+    <link rel="stylesheet" href="/assets/vendor/layui/v1/css/layui.css">
+    <link rel="stylesheet" href="/res/css.html">
+    <link rel="stylesheet" href="/css/flexboxgrid.min.css">
+
+    <script src="/js/jquery-1.10.2.min.js"></script>
+    <script src="/js/jquery.form.js"></script>
+    <script src="/js/jquery.hotkeys.min.js"></script>
+
+    <script src="/js/select/js/select2.min.js"></script>
+    <script src="/js/select/js/i18n/zh-CN.js"></script>
+
+    <script src="/assets/vendor/layui/v1/layui.js"></script>
+    <script src="/js/ukefu.js"></script>
+    <script type="text/javascript" src="/js/kindeditor/kindeditor-min.js"></script>
+    <script type="text/javascript" src="/js/kindeditor/lang/zh-CN.js"></script>
+    <script src="/js/template.js"></script>
+    <script src="/js/weixinAudio.js"></script>
+    <script src="/js/echarts.common.min.js"></script>
+    <script language="javascript" src="/js/theme/wonderland.js"></script>
+    <link href="/js/kindeditor/themes/simple/simple.css" rel="stylesheet">
+    <link id="layuicss-skinlayercss" rel="stylesheet" href="/css/modules/layer/default/layer.css?v=3.0.3303" media="all"></head>
+
+<body>
+<div class="layui-layout layui-layout-content">
+    <div class="uk-layui-form" style="height: calc(100% - 50px);padding-top:0px;">
+        <form class="layui-form" id="workorder-form" style="width: 100%;height: 100%;" >
+            <div class="ukefu-containter">
+                <div class="ukefu-col-left">
+                    <h1 class="site-h1">
+                        工单基本信息
+                    </h1>
+                    <div class="layui-form-item ukefu-form-item">
+                        <label class="layui-form-label ukefu-form-label">
+                            联系人
+
+                        </label>
+                        <div class="layui-input-block">
+                            <select id="contacts" name="cusid" lay-ignore="" class="layui-input layui-unselect select2-hidden-accessible" style="width: 100%; display: inline-block;" tabindex="-1" aria-hidden="true">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item ukefu-form-item">
+                        <label class="layui-form-label ukefu-form-label">
+                            工单发起人
+                        </label>
+                        <div class="layui-input-block">
+                            <select id="initiator" name="initiator" lay-ignore="" class="layui-input layui-unselect select2-hidden-accessible" style="width: 100%; display: inline-block;" tabindex="-1" aria-hidden="true">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline ukefu-form-item">
+                        <label class="layui-form-label ukefu-form-label">受理部门/受理人</label>
+                        <div class="layui-input-inline" style="width: 145px;">
+                            <select id="accdept" name="accdept" lay-ignore="" class="layui-input layui-unselect select2-hidden-accessible" style="width: 100%; display: inline-block;" tabindex="-1" aria-hidden="true">
+                            </select>
+                        </div>
+                        <div class="layui-input-inline" style="width: 145px;" id="deptuserdiv">
+                            <!--<input type="hidden" name="accuser.text" id="accuser_text">-->
+                            <!--<select id="accuser" lay-ignore="" class="ukefu-select select2-hidden-accessible" name="accuser" style="width: 100%; display: inline-block;" onchange="$('#accuser_text').val($(this).find('option:selected').text());" tabindex="-1" aria-hidden="true">-->
+                                <!--<option value="">请选择受理人</option>-->
+                                <!--<option value="">（）</option>-->
+                            <!--</select>-->
+                            <select id="accuser" name="accuser" lay-ignore="" class="layui-input layui-unselect select2-hidden-accessible" style="width: 100%; display: inline-block;" tabindex="-1" aria-hidden="true">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item ukefu-form-item">
+                        <label class="layui-form-label ukefu-form-label">工单状态</label>
+                        <div class="layui-input-block">
+                            <input type="hidden" name="status.text" id="status_text">
+                            <select id="status" name="status" lay-ignore="" class="ukefu-select select2-hidden-accessible" style="width: 100%; display: inline-block;" onchange="$('#status_text').val($(this).find('option:selected').text())" tabindex="-1" aria-hidden="true">
+                                <option value="">请选择...</option>
+                                <option value="4028838b5b55e572015b565262200003">未受理</option>
+                                <option value="4028838b5b55e572015b5652626e0006">已回复</option>
+                                <option value="4028838b5b55e572015b5652627e0007">已关闭</option>
+                                <option value="4028838b5b565caf015b56645f320003">再追问</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item ukefu-form-item">
+                        <label class="layui-form-label ukefu-form-label">工单类型</label>
+                        <div class="layui-input-block">
+                            <select id="wotype" name="wotype" lay-ignore="" class="ukefu-select select2-hidden-accessible" style="width: 100%; display: inline-block;" onchange="$('#wotype_text').val($(this).find('option:selected').text())" tabindex="-1" aria-hidden="true">
+                                <option value="">请选择...</option>
+                                <option value="4028838b5b565caf015b5665e5a30005">投诉</option>
+                                <option value="4028838b5b565caf015b5665e5b90006">问题</option>
+                                <option value="4028838b5b565caf015b5665e5df0007">咨询</option>
+                                <option value="4028838b5b565caf015b5665e5ec0008">故障</option>
+                                <option value="4028838b5b565caf015b5665e5fa0009">任务</option>
+                                <option value="4028838b5b565caf015b5665e608000a">回访</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item ukefu-form-item">
+                        <label class="layui-form-label ukefu-form-label">优先级</label>
+                        <div class="layui-input-block">
+                            <select id="priority" name="priority" lay-ignore="" class="ukefu-select select2-hidden-accessible" style="width: 100%; display: inline-block;" onchange="$('#priority_text').val($(this).find('option:selected').text())" tabindex="-1" aria-hidden="true">
+                                <option value="">请选择...</option>
+                                <option value="4028838b5b565caf015b56688fe3000c">低</option>
+                                <option value="4028838b5b565caf015b56688ff5000d">中</option>
+                                <option value="4028838b5b565caf015b56689005000e">高</option>
+                                <option value="4028838b5b565caf015b56689012000f">紧急</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item ukefu-form-item">
+                        <label class="layui-form-label ukefu-form-label">标签</label>
+                        <div class="layui-input-block">
+                            <select lay-ignore="" name="tags" id="tags" class="ukefu-select select2-hidden-accessible" placeh="" style="width: 100%; display: inline-block;" multiple="" tabindex="-1" aria-hidden="true">
+                                <option value="2c92dbfb5d0bc5b2015d11282f0703bb">u7yu</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="ukefu-col-right">
+                    <h1 class="site-h1">
+                        工单内容
+                    </h1>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">工单标题
+                            <font color="red">*</font>
+                        </label>
+                        <div class="layui-input-block ukefu-form-block">
+                            <input type="text" name="title" id="title" autocomplete="off" class="layui-input" required="" lay-verify="required">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            工单内容
+                            <font color="red">*</font>
+                        </label>
+                        <div class="layui-input-block ukefu-form-block">
+                            <div class="ke-container ke-container-simple" style="width: 100%;"></div><textarea name="content" id="content" style="width: 100%; height: 400px; display: none;"></textarea>
+                        </div>
+                    </div>
+                    <!--
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            附件
+                        </label>
+                        <div class="layui-input-block ukefu-form-block">
+                            <div class="layui-box layui-upload-button">
+                                <input type="file" name="files" accept="*" class="layui-upload-file" onchange="$(this).closest('.layui-form-item').append($(this).closest('.ukefu-form-block').prop('outerHTML'));$(this).closest('.ukefu-form-block').find('.file_ad').html($(this).val());$(this).closest('.ukefu-form-block').find('.file_del').show();"><span class="layui-upload-icon"><i class="layui-icon"></i>上传附件</span>
+                            </div>
+                            <span>
+							<span class="file_ad"></span>
+							<span class="file_del" style="display:none;">
+								<a href="javascript:void(0)" style="margin-left:10px;" onclick="$(this).closest('.ukefu-form-block').remove();">
+						  			<i class="layui-icon" style="color:red;">ဆ</i>
+						  			删除
+						  		</a>
+							</span>
+						</span>
+                        </div>
+                    </div>
+                    -->
+                </div>
+            </div>
+
+            <div class="layui-form-button">
+                <div class="layui-button-block">
+                    <button class="layui-btn" lay-submit lay-filter="update" type="button">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    var thisParent = top.window.frm_workorders;
+
+    $.ajaxSetup({
+        headers: {
+            'content-type': 'application/json'
+        },
+    });
+
+    KindEditor.ready(function (K) {
+        window.kEditor = K.create('#content', {
+            themeType: 'simple',
+            width: "100%",
+            resizeType: 0,
+            uploadJson: "/res/image/upload.html",
+            items: ['fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+                'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+                'insertunorderedlist', '|', 'emoticons', 'image', 'link'],
+            allowFileManager: false,
+            fontsize: 16
+        });
+    });
+    KindEditor.options.cssData = "body { font-size: 15px; font-family:'Microsoft Yahei', 'Helvetica', 'Simsun', 'Arial';}";
+    $(document).ready(function () {
+        $("#contacts").select2({
+            language: 'zh-CN',
+            placeholder: "请选择联系人",
+            ajax: {
+                url: "/restapi/workorders/contacts",
+                dataType: 'json',
+                delay: 250,
+                processResults: function (data, params) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        });
+
+        $("#initiator").select2({
+            language: 'zh-CN',
+            placeholder: "请选择发起人",
+            ajax: {
+                url: "/restapi/workorders/users",
+                dataType: 'json',
+                delay: 250,
+                processResults: function (data, params) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        });
+
+        $("#accdept").select2({
+            language: 'zh-CN',
+            placeholder: "请选择部门",
+            ajax: {
+                url: "/restapi/workorders/organs",
+                dataType: 'json',
+                delay: 250,
+                processResults: function (data, params) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        });
+
+        $("#accuser").select2({
+            language: 'zh-CN',
+            placeholder: "请选择受理人",
+            ajax: {
+                url: "/restapi/workorders/organ-members",
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page,
+                        organid: ($('#accdept').find(":selected").length>0?$('#accdept').find(":selected").val():"")
+                    };
+                },
+                dataType: 'json',
+                delay: 250,
+                processResults: function (data, params) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        });
+
+        $(".ukefu-select").select2({minimumResultsForSearch: Infinity});
+//        $('#accdept').on('select2:select', function (evt) {
+//            //选择部门下的 人员
+//            loadURL("/apps/workorders/dept/user.html?dept=" + evt.target.value, "#deptuserdiv");
+//        });
+    });
+
+    var idNamefields = ['status', 'priority', 'wotype','accuser', 'initiator', 'accdept','tags','contacts'];
+    $(document).ready(function() {
+//        $("#accuser").select2({minimumResultsForSearch: Infinity});
+        $("#accdept").bind("change",function(){
+            if($(this).find(":selected").length>0){
+                $("#accuser").prop("disabled", false);
+            }else{
+                $("#accuser").empty();
+                $("#accuser").prop("disabled", true);
+            }
+        });
+
+
+        layui.use(['form', 'layer' ], function () {
+            var form = layui.form();
+            var layer = layui.layer;
+            var disable = false;
+            form.render(); //更新全部
+            form.on
+            (
+                "submit(update)", function (data) {
+//                    var loading2 = layer.load();
+                    console.log('submit');
+                    if(disable){
+                        return;
+                    }
+                    disable = true;
+                    var parms = {};
+                    $.each($('#workorder-form input[type=text]'), function (i, item) {
+                        parms[$(this).attr('id')] = $(item).val();
+                    });
+                    $.each($('#workorder-form select'), function (i, item) {
+                        var paramName = $(this).attr('id');
+                        var selectedObj = $(this).find(":selected");
+                        if($.inArray(paramName, idNamefields) !== -1){
+                            parms[paramName + 'id'] = (selectedObj.length > 0 ? selectedObj.val() : "");
+                            parms[paramName + 'name'] = (selectedObj.length > 0 ? selectedObj.text() : "");
+                        }
+                    });
+                    parms['content'] = kEditor.html();
+                    parms['contacts'] = {id: parms['contacts']? parms['contacts']:""};
+                    $.post("/restapi/workorders/" + workorderId, JSON.stringify(parms), function (data) {
+                        root.Console.log('done');
+                    }).done(function (data) {
+                        root.Console.log('post success!', 'data', data);
+                        window.location.href = '/page/workorders/index.htm';
+                    }).fail(function (data) {
+                        root.Console.log(data);
+                    }).always(function () {
+//                        layer.close(loading2);
+                        disable = false;
+                    });
+                    return false;
+                })
+            ;
+        });
+    });
+
+
+    var workorderId = location.href.substring(location.href.indexOf("id=")).substring(3);
+    root.Console.log("id:", workorderId);
+
+    $.get('/restapi/workorders/' + workorderId , {}, function (data) {
+        root.Console.log("workorders", data);
+
+        $("#contacts").append(
+            $('<option></option>').val(data.contactsid).html(data.contactsname)
+        );
+
+        $("#initiator").append(
+            $('<option></option>').val(data.initiatorid).html(data.initiatorname)
+        );
+        $("#accdept").append(
+            $('<option></option>').val(data.accdeptid).html(data.accdeptname)
+        );
+        $("#accuser").append(
+            $('<option></option>').val(data.accuserid).html(data.accusername)
+        );
+
+        $("#status").select2().val(data.statusid).trigger("change");;
+        $('#wotype').select2().val(data.wotypeid).trigger("change");;
+        $('#priority').select2().val(data.priorityid).trigger("change");
+        $('#tags').select2().val(data.tagsid).trigger("change");
+        $('#title').val(data.title);
+        window.kEditor.html(data.content);
+        window.kEditor.sync();
+        layui.use(['form','element'], function () {
+            var form = layui.form();
+            form.render('select'); //更新全部
+            var element = layui.element();
+            element.init();
+        });
+
+    }).done(function (data) {
+        root.Console.log("submit done!", data);
+    }).fail(function (data) {
+        root.Console.log(data);
+    }).always(function () {
+    });
+
+</script>
+
+
+</body></html>

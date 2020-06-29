@@ -1,0 +1,118 @@
+<div class="uk-layui-form">
+    <form class="layui-form">
+        <div class="layui-collapse">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">反馈内容<span class="required">（* 表示必填项）</span></h2>
+                <div class="layui-colla-content layui-show feedback-form">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label"><span class="required">* </span>反馈问题：</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="title" id="title" required="" lay-verify="required"
+                                       placeholder="请输入问题内容" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">问题描述：</label>
+                            <div class="layui-input-inline" style="width:520px;">
+                                <textarea name="content" id="content" style="width: 100%; height: 60px; visibility:hidden;"></textarea>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-button">
+            <div class="layui-button-block">
+                <button class="layui-btn layui-hide feedback-edit-btn" lay-submit="" lay-filter="update">保存草稿</button>
+                <button type="reset" class="layui-btn layui-btn-primary  layui-hide feedback-edit-btn">重置</button>
+                <span class="layui-btn layui-btn-primary close-layerwin-window">关闭</span>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+
+
+    var thisParent = top.window.frm_feedback;
+    var feedback_Editor = undefined;
+
+    feedback_Editor = KindEditor.create('textarea[name="content"]', {
+        newlineTag:'br',
+//                                        themeType: 'simple',
+        width: "100%",
+        resizeType: 0,
+        uploadJson: "/res/image/upload.html",
+        items: ['fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+            'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+            'insertunorderedlist', '|', 'emoticons', 'image', 'link'],
+        allowFileManager: false,
+        fontsize: 16
+    });
+    KindEditor.options.cssData = "body { font-size: 15px; font-family:'Microsoft Yahei', 'Helvetica', 'Simsun', 'Arial';}";
+    root.Console.log(" KindEditor init !!! ");
+
+    function loadData() {
+        $.get("/restapi/feedbacks/" + thisParent.feedbackid, {}, function (data) {
+            root.Console.log('done', data);
+            $.each($('.feedback-form input[type=text], .feedback-form textarea'), function (i, item) {
+                var id = $(this).attr('id');
+                if(id === 'content'){
+                    feedback_Editor.html(data[id]);
+                }else {
+                    $(this).val(data[id]);
+                }
+            });
+
+            if (data.status == feedbackStatus.draft && data.currentUser == data.creater) {
+                $('.feedback-edit-btn, .kefu-img-delete-btn, .feedback-upload ').removeClass('layui-hide');
+            }
+
+        }).done(function (data) {
+            root.Console.log("submit done!");
+        }).fail(function (data) {
+            root.Console.log(data);
+        }).always(function () {
+        });
+    }
+
+    loadData();
+
+    layui.use('form', function () {
+        var form = layui.form();
+        var disable = false;
+
+        form.on
+        (
+            "submit(update)", function (data) {
+                if(disable){
+                    return false;
+                }
+                disable = true;
+                root.Console.log("submit add plan!", data.field);
+                feedback_Editor.sync();
+                data.field.content = feedback_Editor.html();
+                ajaxSetup();
+                $.post("/restapi/feedbacks/" + thisParent.feedbackid, JSON.stringify(data.field), function (data) {
+                    root.Console.log('done');
+                }).done(function (data) {
+                    root.Console.log("submit done!");
+                    thisParent.feedbackTable.fnDraw();
+                    layer.close(top.layerwin);
+                }).fail(function (data) {
+                    root.Console.log(data);
+                }).always(function () {
+                    disable = false;
+                });
+                return false;
+            })
+        ;
+    });
+
+
+
+</script>

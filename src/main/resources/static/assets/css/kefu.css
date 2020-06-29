@@ -1,0 +1,18 @@
+.layui-side-scroll{
+    background-color: #FFFFFF !important;
+}
+
+.layui-side-scroll ul dl dd{
+    background-color: #FFFFFF !important;
+}
+
+.highlight-green{
+    color:#009688;
+}
+
+.kefu-img-delete-btn {
+    position: absolute;
+    right: 10px;
+    top: 18px;
+    height: 20px;
+}

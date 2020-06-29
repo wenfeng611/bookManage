@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="viewport"
+          content="width=device-width, maximum-scale=1.0, initial-scale=1.0,initial-scale=1.0,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>科天云客服</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?t=1487250759056"/>
+    <link rel="stylesheet" href="/js/select/css/select2.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/js/kindeditor/themes/default/default.css">
+    <link rel="stylesheet" href="/css/flexboxgrid.min.css">
+    <link rel="stylesheet" href="/assets/vendor/layui/v1/css/layui.css">
+    <link rel="stylesheet" href="/css/datatables.css">
+    <link rel="stylesheet" href="/res/css.html">
+    <link rel="stylesheet" href="/css/flexboxgrid.min.css">
+
+</head>
+
+<body>
+<div class="layui-layout layui-layout-content layui-hide">
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <ul class="layui-nav layui-nav-tree" lay-filter="setting">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="layui-nav-title" href="javascript:;">会话信息</a>
+                    <dl class="layui-nav-child kty-nav-child">
+                        <dd>
+                            <a href="/page/report/history-session.htm">历史会话</a>
+                        </dd>
+                        <dd>
+                            <a href="/page/report/current-session.htm">当前会话</a>
+                        </dd>
+                        <dd>
+                            <a href="/page/report/queue.htm">排队队列</a>
+                        </dd>
+                        <dd>
+                            <a href="/page/report/leave-message.htm">访客留言</a>
+                        </dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="layui-nav-title" href="javascript:;">服务小结</a>
+                    <dl class="layui-nav-child kty-nav-child">
+                        <dd>
+                            <a href="/page/report/agent-summary.htm">多媒体客服</a>
+                        </dd>
+                        <dd>
+                            <a href="/page/report/agent-summary-processed.htm">已处理多媒体客服</a>
+                        </dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="layui-nav-title" href="javascript:;">坐席信息</a>
+                    <dl class="layui-nav-child kty-nav-child">
+                        <dd>
+                            <a href="/page/report/online-agent.htm">在线坐席</a>
+                        </dd>
+                        <dd>
+                            <a href="/page/report/all-agent.htm">全部坐席</a>
+                        </dd>
+                    </dl>
+                </li>
+
+                <!--<li class="layui-nav-item layui-nav-itemed">-->
+                    <!--<a class="layui-nav-title" href="javascript:;">电话信息</a>-->
+                    <!--<dl class="layui-nav-child kty-nav-child">-->
+                        <!--<dd>-->
+                            <!--<a href="/page/report/call-history.htm">历史通话</a>-->
+                        <!--</dd>-->
+                    <!--</dl>-->
+                <!--</li>-->
+            </ul>
+        </div>
+    </div>
+    <div class="layui-body">
+        <div class="layui-side-scroll">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="site-h1" style="border-top:1px solid #e6e6e6;">
+                        报表内容
+                    </h1>
+                    <div id="main-kf-active-content">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/jquery-1.10.2.min.js"></script>
+<script src="/js/jquery.form.js"></script>
+<script src="/js/jquery.hotkeys.min.js"></script>
+
+<script src="/js/select/js/select2.min.js"></script>
+<script src="/js/select/js/i18n/zh-CN.js"></script>
+
+<script src="/assets/vendor/layui/v1/layui.js"></script>
+<script src="/js/ukefu.js"></script>
+<script type="text/javascript" src="/js/kindeditor/kindeditor-min.js"></script>
+<script type="text/javascript" src="/js/kindeditor/lang/zh-CN.js"></script>
+<script src="/js/template.js"></script>
+
+<script src="/js/weixinAudio.js"></script>
+<script src="/js/echarts.common.min.js"></script>
+<script language="javascript" src="/js/theme/wonderland.js"></script>
+<script src="/js/datatables/jquery.dataTables.min.js"></script>
+<script src="/js/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/js/datatable-responsive/datatables.responsive.min.js"></script>
+<script src="/js/datatables/dataTables.tableTools.min.js"></script>
+<script src="/js/datatables/dataTables.colVis.min.js"></script>
+<script src="/js/active-content.js"></script>
+<script>
+
+    //Html编码获取Html转义实体
+    function htmlEncode(value){
+        return $('<div/>').text(value).html();
+    }
+    //Html解码获取Html实体
+    function htmlDecode(value){
+        return $('<div/>').html(value).text();
+    }
+
+    var responsiveHelper_dt_basic = undefined;
+    var tableName = undefined;
+    var breakpointDefinition = {
+        tablet: 1024,
+        phone: 480
+    };
+    var basicTable = undefined;
+    var tags = undefined;
+    var pagefunction = undefined;
+
+    function pageSetUp() {
+//        if(basicTable){
+//            basicTable.destroy();
+//        }
+        basicTable = undefined;
+        tableName = undefined;
+        responsiveHelper_dt_basic = undefined;
+        tags = undefined;
+        pagefunction = undefined;
+    }
+
+
+    function commonSetting4DataTable(tableSetting){
+        var sortIndex = -1;
+        var orderby = tableSetting.orderby;
+
+        $.each(tableSetting.columns, function(i, item){
+            if(orderby){
+                if(item.data && item.data == orderby){
+                    sortIndex = i;
+                }
+            }else{
+                if(item.data && item.data === 'createtime'){
+                    sortIndex = i;
+                }
+            }
+
+            if(!item.className){
+                item.className = "center";
+            }
+            item["asSorting"] = ["desc","asc"];
+            if(typeof item.render !== 'function'){
+                item.render = function(data, type, full){
+                    return (data || data === 0 )?data:"-";
+                }
+            }else{
+                var tmpFun = item.render;
+                item.render = function(data, type, full){
+                    var tmpText = tmpFun(data, type, full);
+
+                    if(typeof tmpText === 'string'){
+                        if(tmpText.indexOf('<') != -1){
+                            return tmpText;
+                        }else{
+                            return htmlEncode(tmpText);
+                        }
+                    }else{
+                        return tmpText;
+                    }
+                }
+
+            }
+        });
+
+        var columnLength = tableSetting.columns.length;
+        var columnWith = 100/columnLength;
+        tableSetting.columns.forEach(function(value, index, array1){
+            value.defaultContent = "";
+            if(!value.width){
+                value.width = columnWith + "%";
+            }
+            if(!value.className){
+                value.className = "center";
+            }
+        });
+
+        if(sortIndex >= 0){
+
+            if(tableSetting.direction){
+                tableSetting.order = [[sortIndex, tableSetting.direction]];
+            }else{
+                tableSetting.order = [[sortIndex, "desc"]];
+            }
+        }
+        tableSetting.destroy = true;
+        tableSetting.language={
+            lengthMenu: "每页显示 _MENU_ 条记录",
+            zeroRecords: "没有检索到数据",
+            emptyTable:"没有数据",
+            info: "共有 _TOTAL_ 条记录",
+            processing:  "<div class=\"icon\"><i class=\"kfont\">&#xe63d;</i></div>",
+            loadingRecords: "<div class=\"icon\"><i class=\"kfont\">&#xe63d;</i>Loading...</div>",
+            search: '<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>',
+            infoEmpty: "共 0 条记录",
+            stateSave: false,
+            paginate: {
+                first: "首页",
+                previous: "前页",
+                next: "后页",
+                last: "尾页"
+            },
+        };
+
+        //tableSetting.dom ="<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hidden-xs'l>r>t<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
+        tableSetting.autoWidth = true;
+        tableSetting.filter = false;
+        tableSetting.serverSide = true;
+        tableSetting.sAjaxDataProp = "datas";
+
+        tableSetting.preDrawCallback = function () {
+            // Initialize the responsive datatables helper once.
+            if (!responsiveHelper_dt_basic) {
+                responsiveHelper_dt_basic = new ResponsiveDatatablesHelper(tableName, breakpointDefinition);
+            }
+        };
+        tableSetting.rowCallback = function (nRow) {
+            if(responsiveHelper_dt_basic) {
+                responsiveHelper_dt_basic.createExpandIcon(nRow);
+            }
+        };
+        tableSetting.drawCallback = function (oSettings) {
+            if(responsiveHelper_dt_basic) {
+                responsiveHelper_dt_basic.respond();
+            }
+        };
+
+        return tableSetting;
+    }
+
+    function initLayUI() {
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+
+            var start = {
+                max: laydate.now()
+                , istoday: false
+                , istime: true
+                , format: 'YYYY-MM-DD hh:mm:ss'
+                , choose: function (datas) {
+                    end.min = datas; //开始日选好后，重置结束日的最小日期
+                    end.start = datas //将结束日的初始值设定为开始日
+                }
+            };
+
+            var end = {
+                max: laydate.now()
+                , format: 'YYYY-MM-DD hh:mm:ss'
+                , istoday: false
+                , istime: true
+                , choose: function (datas) {
+                    start.max = datas; //结束日选好后，重置开始日的最大日期
+                }
+            };
+
+            document.getElementById('starttime').onclick = function () {
+                start.elem = this;
+                laydate(start);
+            }
+            document.getElementById('endtime').onclick = function () {
+                end.elem = this;
+                laydate(end);
+            }
+        });
+
+        layui.use('element', function () {
+            var element = layui.element();
+            element.init();
+            //…
+        });
+
+        layui.use('form', function () {
+            var form = layui.form();
+            form.render(); //更新全部
+            /*form.verify({
+             entphone: function(value){
+             if(value!="" && !new RegExp(/^(0\d{2,3}-{0,1}\d{5,8}(-{0,1}\d{3,5}){0,1})|(((13[0-9])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8})$/).test(value)){
+             return '请输入正确的电话号码';
+             }
+             },
+             entemail: function(value){
+             if(value!="" && !new RegExp(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/).test(value)){
+             return '请输入正确的电子邮箱地址';
+             }
+             }
+             });*/
+            form.on
+            (
+                    "submit", function (data) {
+                        tableName.fnDraw();
+                        return false;
+                    })
+            ;
+        });
+    }
+    $(function () {
+        initAjaxLoadPage();
+        $('.layui-layout-content.layui-hide').removeClass("layui-hide");
+    });
+
+</script>
+</body>
+</html>

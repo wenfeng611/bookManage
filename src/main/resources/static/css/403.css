@@ -1,0 +1,7 @@
+@charset "utf-8";
+html { *overflow:auto; font-family:"Microsoft Yahei","Helvetica","Simsun","Arial";}
+body{
+
+    background-size:cover ;
+    background: url(/images/403.png) no-repeat 0px -100px;
+}

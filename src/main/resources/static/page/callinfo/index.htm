@@ -1,0 +1,920 @@
+<div class="callinfo-dashboard" style="overflow-y:auto;position: absolute;height:100%;width:calc(100% - 350px) ;background-color:#FFFFFF;">
+    <div class="box" style="margin-left:10px;">
+        <div class="box-title">
+            <h1 class="site-h1" style="border-top:1px solid #e6e6e6;height:40px;padding-top:10px;">
+                        <span class="ukefu-bt">
+                            <span style="font-size:20px;color:#32c24d;">客户号码：<span style="color:#feb900;font-size:40px;font-weight: 300;" class="calling-phone"></span></span>
+
+                                    <span style="float:right;margin:0 2px;">
+                                        <a class="layui-btn layui-btn-small green" title="创建服务小结" onclick="showEditArea('div-callinfo-form');">
+                                            创建服务小结
+                                        </a>
+                                    </span>
+                                    <span style="float:right;margin:0 2px;">
+                                        <a class="layui-btn layui-btn-small green" title="创建新工单" onclick="showEditArea('div-callinfo-form');">
+                                            创建新工单
+                                        </a>
+                                     </span>
+                                     <span style="float:right;margin:0 2px;">
+                                        <a class="layui-btn layui-btn-small green" title="添加新客户" onclick="showEditArea('div-callinfo-form');">
+                                            添加新客户
+                                        </a>
+                                     </span>
+                                     <span style="float:right;margin:0 2px;">
+                                        <a class="layui-btn layui-btn-small green" title="添加联系人" onclick="showEditArea('div-form-summary');">
+                                            添加联系人
+                                        </a>
+                                    </span>
+
+                        </span>
+
+            </h1>
+
+        </div>
+        <div class="box-body">
+            <div class="layui-tab">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">联系人信息</li>
+                    <li>历史通话<span class="lay-hide call-history-count">(0)</span></li>
+                    <li>历史工单<span class="lay-hide workorder-history-count">(0)</span></li>
+                    <li>历史小结<span class="lay-hide summary-history-count">(0)</span></li>
+                </ul>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show contact-info">
+                        <div class="layui-show">
+                            <div class="uk-layui-form">
+                                <div class="layui-collapse">
+                                    <div class="layui-colla-item">
+                                        <h2 class="layui-colla-title">基本信息<i class="layui-icon layui-colla-icon"></i></h2>
+                                        <div class="layui-colla-content layui-show">
+                                            <div class="layui-form-item row">
+                                                <div class="col-xs-2">
+                                                    获得时间：
+                                                </div>
+                                                <div class="col-xs-4 contact-touchtime">
+                                                </div>
+                                                <div class="col-xs-2">
+                                                    类型：
+                                                </div>
+                                                <div class="col-xs-4 contact-ckind">
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item row">
+                                                <div class="col-xs-2">
+                                                    共享联系人：
+                                                </div>
+                                                <div class="col-xs-4 contact-shares">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="layui-colla-item">
+                                        <h2 class="layui-colla-title">联系人信息<i class="layui-icon layui-colla-icon"></i></h2>
+                                        <div class="layui-colla-content layui-show">
+                                            <div class="layui-form-item row">
+                                                <div class="col-xs-2">
+                                                    联系人名称：
+                                                </div>
+                                                <div class="col-xs-4 contact-name">
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item row">
+                                                <div class="col-xs-2">
+                                                    性别：
+                                                </div>
+                                                <div class="col-xs-4 contact-gender">
+                                                </div>
+                                                <div class="col-xs-2">
+                                                    生日：
+                                                </div>
+                                                <div class="col-xs-4 contact-birthday">
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item row">
+                                                <div class="col-xs-2">
+                                                    联系电话：
+                                                </div>
+                                                <div class="col-xs-4 ukefu-phone-number ukefu-phone-class contact-phone">
+                                                </div>
+                                                <div class="col-xs-2">
+                                                    手机号：
+                                                </div>
+                                                <div class="col-xs-4 ukefu-phone-number ukefu-phone-class contact-mobile">
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item row">
+                                                <div class="col-xs-2">
+                                                    城市：
+                                                </div>
+                                                <div class="col-xs-4">
+                                                        <span class="contact-province">
+                                                        </span>
+                                                        <span class="contact-city">
+                                                        </span>
+                                                </div>
+                                                <div class="col-xs-2">
+                                                    电子邮件：
+                                                </div>
+                                                <div class="col-xs-4 contact-email">
+                                                </div>
+                                            </div>
+
+                                            <div class="layui-form-item row">
+                                                <div class="col-xs-2">
+                                                    联系人地址：
+                                                </div>
+                                                <div class="col-xs-9 contact-address">
+                                                </div>
+                                            </div>
+
+                                            <div class="layui-form-item row">
+                                                <div class="col-xs-2">
+                                                    联系人说明：
+                                                </div>
+                                                <div class="col-xs-9 contact-memo">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-tab-item">
+                        <div class="layui-show">
+                            <table id="dt_callhistory_basic" class="table table-striped table-bordered table-hover" width="100%">
+                                <thead></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="layui-tab-item">
+                        <div class="layui-show">
+                            <table id="dt_workorder_basic" class="table table-striped table-bordered table-hover" width="100%">
+                                <thead></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="layui-tab-item">
+                        <div class="layui-show">
+                            <table id="dt_summaryhistory_basic" class="table table-striped table-bordered table-hover" width="100%">
+                                <thead></thead>
+                                <tbody></tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="ukefu-chat-prop">
+    <div class="ukefu-prop-list">
+        <div class="layui-side-scroll" id="onlinecontent">
+            <div class="ukefu-chat-history">
+                <h1 class="site-h1">
+                    信息录入或更新
+                </h1>
+                <div class="div-callinfo-form" style="padding-left:5px;">
+                    <div class="div-callinfo-form-item div-form-summary">
+                        <div class="uk-layui-form">
+                            <form class="layui-form" action="/agent/summary/save.html" data-toggle="ajax-form" data-close="true" data-inner="#ukefu-chat-agent" method="post" >
+                                <input type="hidden" name="id" value="">
+                                <input type="hidden" name="userid" value="">
+                                <input type="hidden" name="agentserviceid" value="">
+                                <input type="hidden" name="agentuserid" value="">
+
+                                <div class="layui-form-item">
+                                    <div class="row">
+                                        <font color="red">*</font>服务类型
+                                    </div>
+                                    <div class="row">
+                                        <div class="layui-input-inline" style="width: 100%">
+                                            <select name="servicetype" class="tags" multiple required  lay-verify="required" lay-ignore style="width:100%;">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" style="margin-top:20px;">
+                                    <div class="row">
+                                        是否预约：
+                                    </div>
+                                    <div class="row">
+                                        <div class="layui-input-inline" style="width:150px;">
+                                            <div class="layui-input-block">
+                                                <input type="radio" name="reservation" lay-filter="reservation" value="1" title="是">
+                                                <input type="radio" name="reservation" lay-filter="reservation" value="0" title="否" checked>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item ukefu_reservation" style="display:none;margin-top:20px;">
+                                    <div class="row">
+                                        预约方式：
+                                    </div>
+                                    <div class="row">
+                                        <div class="layui-input-inline" style="width: 120px;">
+                                            <input type="hidden" name="reservtype.text" id="reservtype_text">
+                                            <select id="reservtype" name="reservtype" lay-ignore="" style="width: 120px; display: inline-block;" onchange="$('#reservtype_text').val($(this).find('option:selected').text())">
+                                                <option value="">请选择...</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item ukefu_reservation" style="display:none;margin-top:20px;">
+                                    <div class="row">
+                                        预约时间：
+                                    </div>
+                                    <div class="row">
+                                        <div class="layui-input-inline" style="width: 100%;">
+                                            <input type="text" id="reservtime" name="reservtime" autocomplete="off" value="" class="layui-input">
+                                            <i class="layui-icon" style="position: absolute;right: 3px;top: 6px;font-size: 25px;">&#xe637;</i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" style="margin-top:20px;">
+                                    <div class="row">
+                                        服务小结：
+                                    </div>
+                                    <div class="row">
+                                        <div class="layui-input-inline" style="width: 100%;">
+                                            <textarea name="summary" placeholder="服务小结" class="layui-textarea" style="resize:none;height:180px"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="layui-form-item">
+                                    <div class="row">
+                                        <div class="layui-input-inline" style="width:100%; margin-top:50px;">
+                                            <div class="layui-button-block">
+                                                <button class="layui-btn" lay-submit lay-filter="formDemo">保存</button>
+                                                <button type="reset" class="layui-btn layui-btn-primary" onclick="hideEditArea();">关闭</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="div-callinfo-form-item div-form-contacts layui-hide">
+                        <div class="uk-layui-form">
+                            <form class="layui-form" action="/apps/contacts/save.html" method="post">
+                                <div class="layui-collapse">
+                                    <div class="layui-colla-item">
+                                        <h2 class="layui-colla-title">基本信息 <span class="required">（* 表示必填项）</span></h2>
+                                        <div class="layui-colla-content layui-show">
+                                            <div class="layui-form-item">
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label"><span class="required">*</span>获得时间：</label>
+                                                    <div class="layui-input-inline" title="您得到此联系人的时间">
+                                                        <input type="text" name="touchtime" id="getdate" readOnly="readOnly" lay-verify="date" autocomplete="off"
+                                                               class="layui-input">
+                                                        <i class="layui-icon" style="position: absolute;right: 3px;top: 6px;font-size: 25px;">&#xe637;</i>
+                                                    </div>
+                                                </div>
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label" style="width:60px;line-height: 35px;"><span class="required">*</span>类型：</label>
+                                                    <div class="layui-input-inline" style="width:218px;margin-right:0px;padding-top:9px;">
+                                                        <@select "com.dic.contacts.ckind" "ckind" "" "lay-ignore required lay-verify='required' "/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label">共享联系人：</label>
+                                                    <div class="layui-input-inline" style="width:auto;">
+                                                        <div class="layui-input-block">
+                                                            <input type="radio" name="shares" value="none" title="不共享（仅创建人，所有者和直属上级可见）">
+                                                            <input type="radio" name="shares" value="all" title="所有人" checked>
+                                                            <!--
+                                                            <input type="radio" name="shares" value="1" title="指定人员或部门" checked>
+                                                             -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <div class="layui-inline ukefu-form-item">
+                                                    <label class="layui-form-label">所有者：</label>
+                                                    <div class="layui-input-inline" style="width: 145px;">
+                                                        <select id="datadept" name="datadept" lay-ignore="" class="layui-input layui-unselect select2-hidden-accessible" style="width: 100%; display: inline-block;" tabindex="-1" aria-hidden="true">
+                                                        </select>
+                                                    </div>
+                                                    <div class="layui-input-inline" style="width: 145px;" id="deptuserdiv">
+                                                        <select id="owner" name="owner" lay-ignore="" class="layui-input layui-unselect select2-hidden-accessible" style="width: 100%; display: inline-block;" tabindex="-1" aria-hidden="true">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="layui-colla-item">
+                                        <h2 class="layui-colla-title">联系人信息<span class="required">（* 表示必填项）</span></h2>
+                                        <div class="layui-colla-content layui-show">
+                                            <div class="layui-form-item">
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label" ><span class="required">*</span>联系人名称：</label>
+                                                    <div class="layui-input-inline">
+                                                        <input type="text" name="name" required  lay-verify="required" autocomplete="off"
+                                                               class="layui-input">
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label">性别：</label>
+                                                    <div class="layui-input-inline">
+                                                        <div class="layui-input-block" style="width:220px;">
+                                                            <input type="radio" name="gender" value="1" title="男">
+                                                            <input type="radio" name="gender" value="0" title="女">
+                                                            <input type="radio" name="gender" value="-1" title="未知" checked>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label">生日：</label>
+                                                    <div class="layui-input-inline">
+                                                        <input type="text" id="birthday" name="birthday" autocomplete="off"
+                                                               class="layui-input">
+                                                        <i class="layui-icon" style="position: absolute;right: 3px;top: 6px;font-size: 25px;">&#xe637;</i>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="layui-form-item">
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label"><span class="required">*</span>手机号：</label>
+                                                    <div class="layui-input-inline">
+                                                        <input type="text" name="mobile" required  lay-verify="mobilephone" autocomplete="off" maxlength="11" class="layui-input">
+                                                    </div>
+                                                </div>
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label">联系电话：</label>
+                                                    <div class="layui-input-inline">
+                                                        <input type="text" name="phone"  lay-verify="entphone" autocomplete="off"
+                                                               class="layui-input">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="layui-form-item">
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label"><span class="required">*</span>电子邮件：</label>
+                                                    <div class="layui-input-inline">
+                                                        <input type="text" name="email" lay-verify="entemail" autocomplete="off" class="layui-input">
+                                                    </div>
+                                                </div>
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label">城市：</label>
+                                                    <div class="layui-input-inline" style="width:80px;">
+                                                        <@select "com.dic.address.area" "province" "" "lay-ignore" "width:85px;"/>
+                                                    </div>
+                                                </div>
+                                                <div class="layui-inline">
+                                                    <div class="layui-input-inline" style="width:80px;" id="contacts_city">
+                                                        <@select "com.dic.address.area.city" "city" "" "lay-ignore" "width:86px;"/><!-- 二级字典，不存在的 CODE -->
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="layui-form-item">
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label">联系人地址：</label>
+                                                    <div class="layui-input-inline" style="width: 664px;">
+                                                        <input type="text" name="address" autocomplete="off" class="layui-input">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="layui-form-item">
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label">联系人说明：</label>
+                                                    <div class="layui-input-inline" style="width: 664px;">
+                                                        <textarea name="memo" placeholder="请输入内容" class="layui-textarea" style="resize:none;"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="layui-colla-item">
+                                        <h2 class="layui-colla-title">公司信息<span class="required">（* 表示必填项）</span></h2>
+                                        <div class="layui-colla-content layui-show">
+                                            <div class="layui-form-item">
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label"><span class="required">*</span>公司名称：</label>
+                                                    <div class="layui-input-inline">
+                                                        <input type="text" name="company" required  lay-verify="required" autocomplete="off"
+                                                               class="layui-input">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label">部门名称：</label>
+                                                    <div class="layui-input-inline">
+                                                        <input type="text" name="department" autocomplete="off"
+                                                               class="layui-input">
+                                                    </div>
+                                                </div>
+                                                <div class="layui-inline">
+                                                    <label class="layui-form-label">职务：</label>
+                                                    <div class="layui-input-inline">
+                                                        <input type="text" name="duty" autocomplete="off"
+                                                               class="layui-input">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="layui-form-button">
+                                    <div class="layui-button-block">
+                                        <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                                        <button type="reset" class="layui-btn layui-btn-primary" onclick="hideEditArea();">重置</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    root.Console.log("load call info content!");
+    var phone = $('.board-call-phone').text();
+    var prefixRec = null;
+    var loading = true;
+    var contactId = null;
+
+    function openRec(n) {
+        var html = "<audio src='" + prefixRec + n + "' preload='auto' controls style='width: 100%;margin-top: 15px;'>";
+        layer.open({
+            type: 1,
+            title: ['录音回放', 'font-size:10px;'],
+            area: ['500px', '100px'],
+            offset: '100px',
+            content: html
+        });
+    }
+
+    var workorderTable = undefined;
+    var basicCallHistoryTable = undefined;
+    var summaryHistoryTable = undefined;
+
+    function initWorkorderTable(data) {
+        workorderTable = commonDataTable({
+            "columns": [
+                {
+                    title: "编号", data: "orderno"},
+                {
+                    title: "标题", data: "title", "render": function (data, type, full) {
+                    return "<a onclick='showdetail(\"" + full.id + "\")' title=\"" + data + "\">" + data + "</a>";
+                }
+                },
+                {title: "联系人", data: "contactsname",},
+                {
+                    title: "优先级", data: "priorityname", "render": function (data, type, full) {
+                    return (data && workorderspriority[data]) ? "<i class='kfont' style='color:#1E9FFF' title='优先级：" + workorderspriority[data] + "'></i>" : data;
+                }
+                },
+                {
+                    title: "状态", data: "statusname", "render": function (data, type, full) {
+                    return "<small class='ukefu-label' style='background-color:#1E9FFF'>" + ((data && workordersstatus[data]) ? workordersstatus[data] : data) + "</small>";
+                }
+                },
+                {title: "处理人", data: "accusername",},
+                {title: "创建时间", data: "createtime",},
+            ],
+
+            "fnServerData": function (sSource, aoData, fnCallback) {
+
+                var start = 0;
+                var length = 10;
+                var columns = null;
+                var sEcho = 1;
+                var order = [];
+                $.each(aoData, function (i, item) {
+                    var name = item['name'];
+                    var value = item['value'];
+                    if (name == "start") {
+                        start = value;
+                    } else if (name == 'length') {
+                        length = value;
+                    } else if (name == 'draw') {
+                        sEcho = value;
+                    } else if (name == 'order') {
+                        order = value;
+                    } else if (name == 'columns') {
+                        columns = value;
+                    }
+                });
+
+                var orderby = columns[order[0].column].data;
+                var direction = order[0].dir;
+
+                if(loading) {
+                    var content = data;
+                    content['sEcho'] = sEcho;
+                    content['iDisplayStart'] = content.paging.offset;
+                    content['iDisplayLength'] = content.paging.limit;
+                    content['iTotalRecords'] = content.paging.count;
+                    content['iTotalDisplayRecords'] = content.paging.count;
+                    content['sortField'] = orderby; //"createTime";
+                    content['sortType'] = direction;
+                    fnCallback(content);
+
+
+                } else {
+
+                    var orderby = columns[order[0].column].data;
+                    var direction = order[0].dir;
+
+                    var postData = {};
+                    postData.orderby = orderby ? orderby : "servicetime";
+                    postData.direction = direction ? direction : "desc";
+                    postData.offset = start ? start : 0;
+                    postData.limit = length ? length : 20;
+                    $.get('/restapi/callinfo/' + contactId + "/workorder", postData, function (data) {
+
+                        var content = data;
+                        if (!content) {
+                            content = {paging: {count: 0, limit: 10, offset: 0}};
+                        } else {
+                            prefix_rec = data.prefix_rec ? data.prefix_rec : undefined;
+                        }
+                        content['sEcho'] = sEcho;
+                        content['iDisplayStart'] = content.paging.offset;
+                        content['iDisplayLength'] = content.paging.limit;
+                        content['iTotalRecords'] = content.paging.count;
+                        content['iTotalDisplayRecords'] = content.paging.count;
+                        content['sortField'] = orderby; //"createTime";
+                        content['sortType'] = direction;
+                        fnCallback(content);
+                    }).done(function (data) {
+                        //log('done');
+                    }).fail(function (data) {
+                        if (data.status === 403) {
+                            root.Console.log("current request need login!");
+                        }
+                    }).always(function () {
+                        //log('always');
+                    });
+                }
+
+            },
+            "orderby": "createtime",
+            "table": $('#dt_workorder_basic'),
+        });
+    }
+
+    function initCallHistoryTable(data) {
+
+        basicCallHistoryTable = commonDataTable({
+            "columns": [
+                {title: "坐席姓名", data: "agentUserName",},
+                {title: "客户号码", data: "ani",},
+                {title: "所在区域", data: "area",},
+                {title: "呼叫方向", data: "direction",render:function(data, type, full){return data==='ib'?"呼入":"呼出";}},
+                {title: "客服号码", data: "dnis",},
+                {title: "通话状态", data: "bridged", render:function(data, type, full){return data?"成功":"失败";}},
+                {title: "通话时长", data: "billingInSec",},
+                {title: "通话时间", data: "bridgeTime",},
+                {
+                    title: "录音", data: "recordFile", "render": function (data, type, full) {
+                    return (data && data != 0) ? '<a href="javascript:void(0);" onclick="openRec(\'' + data + '\');" >录音回放</a>' : '无'
+                },
+                },
+//                {title: "挂机原因", data: "hangupCause", "render": function (data, type, full) {
+//                    return data && hangCause[data]?hangCause[data]: (data?data:"未知");
+//                }},
+
+
+            ],
+
+            "fnServerData": function (sSource, aoData, fnCallback) {
+
+                var start = 0;
+                var length = 10;
+                var columns = null;
+                var sEcho = 1;
+                var order = [];
+                $.each(aoData, function (i, item) {
+                    var name = item['name'];
+                    var value = item['value'];
+                    if (name == "start") {
+                        start = value;
+                    } else if (name == 'length') {
+                        length = value;
+                    } else if (name == 'draw') {
+                        sEcho = value;
+                    } else if (name == 'order') {
+                        order = value;
+                    } else if (name == 'columns') {
+                        columns = value;
+                    }
+                });
+
+
+                if(loading) {
+                    var content = data;
+                    content['sEcho'] = sEcho;
+                    content['iDisplayStart'] = content.paging.offset;
+                    content['iDisplayLength'] = content.paging.limit;
+                    content['iTotalRecords'] = content.paging.count;
+                    content['iTotalDisplayRecords'] = content.paging.count;
+                    content['sortField'] = orderby; //"createTime";
+                    content['sortType'] = direction;
+                    fnCallback(content);
+
+
+                } else {
+
+                    var orderby = columns[order[0].column].data;
+                    var direction = order[0].dir;
+
+                    var postData = {};
+                    postData.orderby = orderby ? orderby : "servicetime";
+                    postData.direction = direction ? direction : "desc";
+                    postData.offset = start ? start : 0;
+                    postData.limit = length ? length : 20;
+                    $.get('/restapi/callinfo/' + phone + "/history", postData, function (data) {
+
+                        var content = data;
+                        if (!content) {
+                            content = {paging: {count: 0, limit: 10, offset: 0}};
+                        } else {
+                            prefix_rec = data.prefix_rec ? data.prefix_rec : undefined;
+                        }
+                        content['sEcho'] = sEcho;
+                        content['iDisplayStart'] = content.paging.offset;
+                        content['iDisplayLength'] = content.paging.limit;
+                        content['iTotalRecords'] = content.paging.count;
+                        content['iTotalDisplayRecords'] = content.paging.count;
+                        content['sortField'] = orderby; //"createTime";
+                        content['sortType'] = direction;
+                        fnCallback(content);
+                    }).done(function (data) {
+                        //log('done');
+                    }).fail(function (data) {
+                        if (data.status === 403) {
+                            root.Console.log("current request need login!");
+                        }
+                    }).always(function () {
+                        //log('always');
+                    });
+                }
+            },
+            "orderby":'startStamp',
+            "table": $('#dt_callhistory_basic'),
+        });
+    };
+
+    function initSummaryTable(data,tags) {
+        summaryHistoryTable = commonDataTable({
+            "columns": [
+                {
+                    title: "<input type=checkbox id=all/>",
+                    data: "id",
+                    orderable: false,
+                    "render": function (data, type, full) {
+                        return '<input type="checkbox" class="ids" name="ids"/>';
+                    }
+                },
+                {
+                    title: "访客", data: "username", "render": function (data, type, full) {
+                    return '<a href="/service/online/index.html?userid=' + full.userid + '&agentservice=' + full.agentserviceid + '&id=' + full.id + '">' + data + '</a>';
+                }
+                },
+                {title: "服务坐席", data: "agentusername",},
+                {title: "渠道", data: "channel",},
+                {title: "服务时间", data: "createtime",},
+                {
+                    title: "服务类型", data: "servicetype", "render": function (data, type, full) {
+                    var serviceName = '';
+                        $.each(tags, function (i, item) {
+                            if (item.id == data) {
+                                serviceName = item.tag;
+                                return false;
+                            }
+                        });
+
+                    return serviceName;
+                }
+                },
+                {
+                    title: "是否预约", data: "reservation", "render": function (data, type, full) {
+                    return data ? '<i class="layui-icon" style="color:#19a55d;">&#xe618;</i>' : '';
+                }
+                },
+                {title: "预约方式", data: "reservtype"},
+                {title: "预约时间", data: "reservtime"},
+                {
+                    title: "操作", data: "id", orderable: false, "render": function (data, type, full) {
+                    return '<a href="/apps/agent/summary/process.html?id=' + data + '" data-toggle="ajax" data-width="950" data-height="450" title="服务小结处理"><i class="layui-icon">&#xe642;</i>处理</a>';
+                }
+                },
+            ],
+
+            "fnServerData": function (sSource, aoData, fnCallback) {
+
+                var start = 0;
+                var length = 10;
+                var columns = null;
+                var sEcho = 1;
+                var order = [];
+                $.each(aoData, function (i, item) {
+                    var name = item['name'];
+                    var value = item['value'];
+                    if (name == "start") {
+                        start = value;
+                    } else if (name == 'length') {
+                        length = value;
+                    } else if (name == 'draw') {
+                        sEcho = value;
+                    } else if (name == 'order') {
+                        order = value;
+                    } else if (name == 'columns') {
+                        columns = value;
+                    }
+                });
+
+
+                if(loading) {
+                    var content = data;
+                    content['sEcho'] = sEcho;
+                    content['iDisplayStart'] = content.paging.offset;
+                    content['iDisplayLength'] = content.paging.limit;
+                    content['iTotalRecords'] = content.paging.count;
+                    content['iTotalDisplayRecords'] = content.paging.count;
+                    content['sortField'] = orderby; //"createTime";
+                    content['sortType'] = direction;
+                    fnCallback(content);
+
+
+                } else {
+
+                    var orderby = columns[order[0].column].data;
+                    var direction = order[0].dir;
+
+                    var postData = {};
+                    postData.orderby = orderby ? orderby : "servicetime";
+                    postData.direction = direction ? direction : "desc";
+                    postData.offset = start ? start : 0;
+                    postData.limit = length ? length : 20;
+                    $.get('/restapi/callinfo/' + phone + "/summary", postData, function (data) {
+
+                        var content = data;
+                        if (!content) {
+                            content = {paging: {count: 0, limit: 10, offset: 0}};
+                        } else {
+                            prefix_rec = data.prefix_rec ? data.prefix_rec : undefined;
+                        }
+                        content['sEcho'] = sEcho;
+                        content['iDisplayStart'] = content.paging.offset;
+                        content['iDisplayLength'] = content.paging.limit;
+                        content['iTotalRecords'] = content.paging.count;
+                        content['iTotalDisplayRecords'] = content.paging.count;
+                        content['sortField'] = orderby; //"createTime";
+                        content['sortType'] = direction;
+                        fnCallback(content);
+                    }).done(function (data) {
+                        //log('done');
+                    }).fail(function (data) {
+                        if (data.status === 403) {
+                            root.Console.log("current request need login!");
+                        }
+                    }).always(function () {
+                        //log('always');
+                    });
+                }
+            },
+            "orderby":'createtime',
+            "table": $('#dt_summaryhistory_basic'),
+        });
+    }
+
+    function saveSummary(){
+
+    }
+    function showEditArea(item){
+        $('.div-callinfo-form-item').remove('layui-hide').addClass('layui-hide'); $('.' + item).removeClass('layui-hide');
+        $('.callinfo-dashboard').css('width', 'calc(100% - 350px)');
+        $('.ukefu-chat-prop').removeClass('layui-hide');
+    }
+
+    function hideEditArea(){
+        $('.ukefu-chat-prop').removeClass('layui-hide').addClass('layui-hide');
+        $('.callinfo-dashboard').css('width', '100%');
+    }
+    function initPage() {
+
+        $('.contact-info .col-xs-2').css("text-align", 'right');
+        $('.calling-phone').text(phone);
+        $.get('/restapi/callinfo/' + phone, {}, function (data) {
+
+            $('.call-history-count').removeClass('lay-hide').addClass("lay-hide");
+            if (data && data.contacts) {
+                prefixRec = data.prefixRec;
+                contactId = data.contacts.id;
+                $.each(data.contacts, function (key, element) {
+//                root.Console.log("key", key, "value", element);
+                    var obj = $('.contact-info .contact-' + key);
+                    if (obj) {
+//                    root.Console.log(obj);
+                        if ((key === 'touchtime' || key === 'birthday' ) && element) {
+                            obj.html(element.substring(0, 10));
+                        } else if (key === 'gender') {
+                            obj.html(element === "1" ? "男" : ( element === "0" ? "女" : (element ? "未设" : "") ));
+                        } else if (key === 'shares') {
+                            obj.html(element === "all" ? "所有人" : ( element === "none" ? "不共享" : (element ? "不共享" : "")));
+                        } else {
+                            obj.html(element);
+                        }
+                    }
+                });
+            }
+
+            if (data && data.callDetailList) {
+                $('.call-history-count').html("(" + data.callDetailList.paging.count + ")");
+                initCallHistoryTable(data.callDetailList);
+            }
+
+            if (data && data.workOrderList) {
+                $('.workorder-history-count').html("(" + data.workOrderList.paging.count + ")");
+                initWorkorderTable(data.workOrderList);
+            }
+
+            if (data && data.callSummaryReservType) {
+                var reservtypeSelect = $("select[name=reservtype]");
+                root.Console.log("reservTypeSelect", reservtypeSelect, data.callSummaryReservType);
+                $.each(data.callSummaryReservType, function (i, item) {
+                    reservtypeSelect.append("<option value='" + item.id + "'>" + item.name + "</option>");
+                });
+            }
+            if (data && data.summaryList) {
+                $('.summary-history-count').html("(" + data.summaryList.paging.count + ")");
+                initSummaryTable(data.summaryList, data.tags);
+            }
+            if (data && data.tags) {
+                var servicetypeSelect = $("select[name=servicetype]");
+                $.each(data.tags, function (i, item) {
+                    servicetypeSelect.append("<option value='" + item.id + "'>" + item.tag + "</option>");
+                });
+            }
+            loading=false;
+            root.Console.log(data)
+
+        }).done(function (data) {
+
+        }).fail(function (data) {
+            root.Console.log(data);
+        }).always(function () {
+        });
+
+        layui.use('form', function () {
+            var form = layui.form();
+            form.render(); //更新全部
+            form.on("radio(reservation)", function (data) {
+                if (data.value == '1') {
+                    $('.ukefu_reservation').show();
+                } else {
+                    $('.ukefu_reservation').hide();
+                }
+            });
+        });
+        layui.use('element', function () {
+            var element = layui.element();
+        });
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+
+            var date = {
+                min: laydate.now(),
+                istime: true,
+                format: "YYYY-MM-DD hh:mm:ss",
+                istoday: false
+            };
+
+            document.getElementById('reservtime').onclick = function () {
+                date.elem = this;
+                laydate(date);
+            }
+
+        });
+        $(".tags").select2();
+    }
+
+    $(function(){
+        initPage();
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <meta name="viewport"
+          content="width=device-width, maximum-scale=1.0, initial-scale=1.0,initial-scale=1.0,user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <title>科天云客服</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?t=1487250759056"/>
+    <link rel="stylesheet" href="/js/select/css/select2.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/js/kindeditor/themes/default/default.css">
+    <link rel="stylesheet" href="/css/flexboxgrid.min.css">
+    <link rel="stylesheet" href="/assets/vendor/layui/v1/css/layui.css">
+    <link rel="stylesheet" href="/css/datatables.css">
+    <link rel="stylesheet" href="/res/css.html">
+    <link rel="stylesheet" href="/css/flexboxgrid.min.css">
+
+</head>
+
+<body>
+<div class="layui-layout layui-layout-content workorders-layout-content">
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <ul class="layui-nav layui-nav-tree" lay-filter="setting">
+                <li class="layui-nav-item layui-this kty-nav-child">
+                    <a class="layui-nav-default">工单概况</a>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="layui-nav-title" href="javascript:;">工单管理</a>
+                    <dl class="layui-nav-child kty-nav-child ukefu-count-tip">
+                        <dd>
+                            <a class="order-nav-mine">我的工单
+                                <div class="tip"></div>
+                            </a>
+                        </dd>
+                        <dd>
+                            <a class="order-nav-myhold">待处理工单
+                                <div class="tip"></div>
+                            </a>
+                        </dd>
+                        <dd>
+                            <a class="order-nav-unassigned">未分配工单
+                                <div class="tip"></div>
+                            </a>
+                        </dd>
+                        <!--<dd>-->
+                            <!--<a class="order-nav-favorite">关注的工单-->
+                                <!--<div class="tip"></div>-->
+                            <!--</a>-->
+                        <!--</dd>-->
+                        <dd>
+                            <a class="order-nav-closed">已关闭工单
+                                <div class="tip"></div>
+                            </a>
+                        </dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="layui-body">
+        <div class="layui-side-scroll">
+
+                <div id="main-kf-summary-content" style="display:none">
+
+                </div>
+                <div id="main-kf-workorder-content"  style="display:none">
+
+                </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/jquery-1.10.2.min.js"></script>
+<script src="/js/jquery.form.js"></script>
+<script src="/js/jquery.hotkeys.min.js"></script>
+
+<script src="/js/select/js/select2.min.js"></script>
+<script src="/js/select/js/i18n/zh-CN.js"></script>
+
+<script src="/assets/vendor/layui/v1/layui.js"></script>
+<script src="/js/ukefu.js"></script>
+<script type="text/javascript" src="/js/kindeditor/kindeditor-min.js" charset="utf-8"></script>
+<script type="text/javascript" src="/js/kindeditor/lang/zh-CN.js" charset="utf-8"></script>
+<script src="/js/template.js"></script>
+
+<script src="/js/weixinAudio.js"></script>
+<script src="/js/echarts.common.min.js"></script>
+<script language="javascript" src="/js/theme/wonderland.js"></script>
+<script src="/js/datatables/jquery.dataTables.min.js"></script>
+<script src="/js/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/js/datatable-responsive/datatables.responsive.min.js"></script>
+<script src="/js/datatables/dataTables.tableTools.min.js"></script>
+<script src="/js/datatables/dataTables.colVis.min.js"></script>
+<script src="/js/active-content.js"></script>
+<script>
+
+    var listtype = '';
+    var workorders = new Array();
+    var workorderDetail = undefined;
+    var feedbackEditor = undefined;
+    var uname = '';
+
+    var loadContacts = undefined;
+    function updateContacts(arg){
+        if(arg){
+            loadContacts = arg;
+        }
+
+        if(loadContacts === -1){
+            return;
+        }
+
+        $.get('/restapi/workorders/contacts/' + workorderDetail.contactsid , {}, function (data) {
+            root.Console.log("contacts", data);
+            //contacts-detail
+            $.each(data, function(key, element) {
+
+                var obj = $('.contacts-detail .contact-' + key);
+                if(obj){
+                    if(key === 'touchtime'){
+                        obj.html(element.substring(0,10));
+                    }else{
+                        obj.html(element);
+                    }
+
+                }
+            });
+            console.log($(data).data());
+        }).done(function (data) {
+            root.Console.log("complete updateContacts!", data);
+        }).fail(function (data) {
+            root.Console.log(data);
+        }).always(function () {
+        });
+    }
+
+    function deleteOrder(){
+        $.post('/restapi/workorders/' + workorderDetail.id + "/delete", JSON.stringify({}), function(){
+            root.Console.log('done');
+            $('#ukefu-workorders-list li#' + workorderDetail.id).remove();
+//            var existOrderObj = $('#ukefu-workorders-list li:first');
+//            if(existOrderObj && existOrderObj.attr){
+//                workorderDetail.id = existOrderObj.attr("id");
+//            }
+            var nextItem = $('.ukefu-workorders-list-item:first');
+            if(nextItem){
+                nextItem.click();
+            }else{
+                $('#workordersdetail').hide();
+            }
+        }).done(function (data) {
+            root.Console.log('post success!', 'data', data);
+            feedbackEditor.html('');
+        }).fail(function (data) {
+            root.Console.log(data);
+        }).always(function () {
+            disable = false;
+        });
+    }
+
+    function orderComementsDiv(item) {
+        return ['',
+            '<div class="row">',
+            '<div class="col-lg-12" style="padding-left:0px;padding-right:0px;">',
+            '<div class="ukefu-workorders-ibfo" style="padding:10px 20px;">',
+            '<i class="layui-icon headimg"></i>',
+            '<div class="workorders-desc">',
+            '<a href="javascript:void(0)">', item.creatername,'</a>',
+            ' <span>', item.createtime, '</span>',
+            '</div>',
+            '<div class="workorders-content">', item.content, '</div>',
+            '</div>',
+            '</div>',
+            '</div>',
+            ''].join('');
+    }
+    function loadWorkOrderComments() {
+        var commentsID = '.workorder-comments';
+        $(commentsID).empty();
+        if(!workorderDetail){
+            return;
+        }
+        layui.use('flow', function () {
+            var flow = layui.flow;
+            flow.load({
+                elem: commentsID //流加载容器
+                , scrollElem: commentsID //滚动条所在元素，一般不用填，此处只是演示需要。
+//                , scrollElem: ".ukefu-col-right"
+                , done: function (page, next) { //执行下一页的回调
+
+                    //模拟数据插入
+                    setTimeout(function () {
+                        var lis = [];
+
+                        var offset = 0;
+                        $.get('/restapi/workorders/' + workorderDetail.id + '/comments', {
+                            orderby: 'createtime',
+                            direction: 'desc',
+                            offset: 0,
+                            limit: 10
+                        }, function (data) {
+                            $.each(data.datas, function (i, item) {
+                                lis.push(orderComementsDiv(item));
+                            });
+
+                        }).done(function (data) {
+                            root.Console.log("complete loadWorkOrderComments!", data);
+                            //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                            //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                            next(lis.join(''), page < data.paging.pages); //假设总页数为 10
+
+                            //next($('#ukefu-workorders-comment').append(res), $(res).length > 0);
+
+                            if(!feedbackEditor){
+
+                                    feedbackEditor = KindEditor.create('textarea[name="content"]', {
+//                                        themeType: 'simple',
+                                        newlineTag:'br',
+                                        width: "100%",
+                                        resizeType: 0,
+                                        uploadJson: "/res/image/upload.html",
+                                        items: ['fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+                                            'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+                                            'insertunorderedlist', '|', 'emoticons', 'image', 'link'],
+                                        allowFileManager: false,
+                                        fontsize: 16
+                                    });
+                                KindEditor.options.cssData = "body { font-size: 15px; font-family:'Microsoft Yahei', 'Helvetica', 'Simsun', 'Arial';}";
+                                root.Console.log(" KindEditor init !!! ");
+                            }
+
+
+                        }).fail(function (data) {
+                            root.Console.log(data);
+                        }).always(function () {
+                        });
+
+                    }, 100);
+                }
+            });
+        });
+    }
+
+    function loadWorkorderDetail(){
+        root.Console.log('loadWorkorderDetail', $('.workorder-detail-title').html(), workorders.length);
+        if( workorders.length>0 ){
+            if(showSpecForWorkorderId){
+                $.each(workorders, function(i, data){
+                    if(data.id === showSpecForWorkorderId){
+                        workorderDetail = data;
+                        return false;
+                    }
+                })
+
+                showSpecForWorkorderId = null;
+            }
+            if(!workorderDetail){
+                workorderDetail = workorders[0];
+            }
+            var item = workorderDetail;
+            if(item.id === $('.workorder-detail-title').attr('id')){
+                return;
+            }
+            $('.workorder-detail-title').html(item.title).attr('id', workorderDetail.id);
+            $('.workorder-detail-createtime').html(item.createtime);
+            $('.workorder-detail-updatetime').html(item.updatetime);
+            $('.workorder-detail-contactsname').html(item.contactsname);
+            $('.workorder-detail-wotypename').html(item.wotypename);
+            $('.workorder-detail-statusname').html(item.statusname);
+            $('.workorder-detail-initiatorname').html(item.initiatorname);
+            $('.workorder-detail-content').html(item.content);
+//            $('.workorder-detail-creatername').html(item.creatername);
+            loadWorkOrderComments();
+            updateContacts();
+
+        }
+    }
+
+    function initMenu() {
+
+        $('.workorders-layout-content .kty-nav-child ').delegate('a', 'click', function() {
+            var thisObj = $(this);
+            var showdefault = false;
+            if (thisObj.hasClass("order-nav-mine")) {
+                listtype = 'mine';
+            } else if (thisObj.hasClass("order-nav-myhold")) {
+                listtype = 'myhold';
+            } else if (thisObj.hasClass("order-nav-unassigned")) {
+                listtype = 'unassigned';
+            } else if (thisObj.hasClass("order-nav-favorite")) {
+                listtype = 'favorite';
+            } else if (thisObj.hasClass("order-nav-closed")) {
+                listtype = 'closed';
+            } else if (thisObj.hasClass("layui-nav-default")) {
+                showdefault = true;
+            }
+
+            var activeContent = $('#main-kf-summary-content');
+            var orderContent = $('#main-kf-workorder-content');
+
+            root.Console.log("showdefault", showdefault);
+            if(showdefault){
+                activeContent.show();
+                orderContent.hide();
+            }else{
+                orderContent.show();
+                activeContent.hide();
+                loadWorkOrderList();
+            }
+
+            root.Console.log('listtype:', listtype);
+            return false;
+        });
+
+        $('body').delegate('.ukefu-workorders-list-item', 'click', function(){
+            root.Console.log('click workorder-list-item');
+            var id = $(this).attr('id');
+
+            $.each(workorders, function(i, item){
+                if(item.id === id){
+                    workorderDetail = item;
+                    loadWorkorderDetail();
+                    return false;
+                }
+                root.Console.log(item);
+            })
+
+            return false;
+        });
+
+    };
+
+    function workorderDivContent(item) {
+        //lis.push('<li>' + item.title + item.contactsname + item.statusname + item.wotypename + item.updatetime + '</li>');
+        return ['<div class="ukefu-workorders-number" id="fav_eb8f90f355bb4704ba5582b0e771f001">',
+            '<span>', item.orderno, '</span>',
+            '<a class="workorder-list-item" id="', item.id ,'">',
+            '<i class="kfont green"></i>',
+            '</a>',
+            '</div>',
+            '<div class="ukefu-workorders-priority"><i class="kfont" style="color:#1E9FFF" title="中"></i></div>',
+            '<a class="workorder-list-item">',
+            '<div class="ukefu-workorders-block"><div class="ukefu-workorders-title">',item.title,'</div></div>',
+            '<div class="ukefu-workorders-block"><div class="ukefu-workorders-contacts">联系人：',item.contactsname,'</div></div>',
+            '<div class="ukefu-workorders-block">',
+            '<div class="ukefu-workorders-status">状态/类型：',
+            '<small class="ukefu-label" style="background-color:#32c24d">',item.statusname,'</small><small class="ukefu-label theme4">',item.wotypename,'</small>',
+            '</div></div>',
+            '<div class="ukefu-workorders-block"><div class="ukefu-workorders-time">更新时间：',item.updatetime,'</div></div></a>',].join('');
+    }
+
+    function loadWorkOrderList() {
+        workorders = new Array();
+        workorderDetail = undefined;
+        layui.use('flow', function () {
+            var flow = layui.flow;
+            var orderListID = '#workOrdersPages';
+            $(orderListID).empty();
+            flow.load({
+                elem: orderListID //流加载容器
+                , scrollElem: orderListID //滚动条所在元素，一般不用填，此处只是演示需要。
+                , done: function (page, next) { //执行下一页的回调
+
+                    //模拟数据插入
+                    setTimeout(function () {
+                        var lis = [];
+
+                        var offset = 0;
+                        $.get("/restapi/workorders", {
+                            orderby: 'createtime',
+                            direction: 'desc',
+                            offset: 0,
+                            limit: 10,
+                            type: listtype,
+                            q:$('#search-q').val()
+                        }, function (data) {
+                            $.each(data.datas, function (i, item) {
+                                lis.push('<li class="ukefu-workorders-list-item" style="background-color: #ededed;" id="' + item.id + '">' + workorderDivContent(item) + '</li>');
+                            });
+                            uname = data.uname;
+                            Array.prototype.push.apply(workorders, data.datas);
+                            loadWorkorderDetail();
+                            root.Console.log('done', data, workorders);
+                        }).done(function (data) {
+                            root.Console.log("complete loadWorkOrderList!");
+                            //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                            //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                            next(lis.join(''), page < data.paging.pages); //假设总页数为 10
+                        }).fail(function (data) {
+                            root.Console.log(data);
+                        }).always(function () {
+                        });
+
+                    }, 100);
+                }
+            });
+        });
+    }
+
+    function editWorkerOrder(){
+        root.Console.log("edit worker order!");
+        location.href="/page/workorders/edit.htm?id=" + workorderDetail.id;
+    }
+
+    $(function(){
+        var contentSummary = $("#main-kf-summary-content");
+        var contentOrder = $("#main-kf-workorder-content");
+        contentSummary.load("/page/workorders/summary.htm", function(){
+            contentSummary.show();
+            initMenu();
+            contentOrder.load("/page/workorders/list.htm", function(){
+                layui.use(['element', 'form'], function () {
+                    var disable = false;
+                    var element = layui.element();
+                    element.init();
+                    var form = layui.form();
+                    form.render(); //更新全部
+                    form.on
+                    (
+                        "submit(comments)", function (data) {
+                            if(disable){
+                                return;
+                            }
+                            disable = true;
+                            feedbackEditor.sync();
+                            var postData = {content:feedbackEditor.html(),
+                                privately:$('input[type=radio][name=prirep]:checked').val() == 0 ? true: false};
+                            $.post('/restapi/workorders/' + workorderDetail.id + '/comments' , JSON.stringify(postData), function(){
+                                root.Console.log('done');
+                                var comment = {creatername:uname, createtime: new Date().Format('yyyy-MM-dd HH:mm:ss'), content: postData.content};
+                                $('.workorder-comments').prepend(orderComementsDiv(comment));
+                            }).done(function (data) {
+                                root.Console.log('post success!', 'data', data);
+                                feedbackEditor.html('');
+                            }).fail(function (data) {
+                                root.Console.log(data);
+                            }).always(function () {
+                                disable = false;
+                            });
+
+                            return false;
+                        });
+                });
+            });
+        });
+    });
+
+    var showSpecForWorkorderId = null;
+    function showdetail( orderId){
+        root.Console.log("orderId", orderId);
+//        $("#main-kf-summary-content").hide();
+//        $("#main-kf-workorder-content").show();
+        showSpecForWorkorderId = orderId;
+        $('.order-nav-myhold').click();
+    }
+
+</script>
+
+</body>
+</html>

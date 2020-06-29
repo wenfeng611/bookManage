@@ -1,0 +1,83 @@
+<div class="uk-layui-form">
+    <form class="layui-form">
+        <div class="layui-collapse">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">反馈内容<span class="required">（* 表示必填项）</span></h2>
+                <div class="layui-colla-content layui-show">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label"><span class="required">* </span>反馈问题：</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="title" id="title" required="" lay-verify="required" placeholder="请输入问题内容" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label"><span class="required">* </span>问题描述：</label>
+                            <div class="layui-input-inline" style="width:520px;">
+                                <textarea name="content" id="feedback-add-content" style="width: 100%; height: 60px; visibility:hidden;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-button">
+            <div class="layui-button-block">
+                <button class="layui-btn" lay-submit lay-filter="save">保存草稿</button>
+                <button class="layui-btn layui-hide" lay-submit lay-filter="public">直接发布</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                <span class="layui-btn layui-btn-primary close-layerwin-window">关闭</span>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+
+    var thisParent = top.window.frm_feedback;
+    var feedback_add_Editor = undefined;
+
+    feedback_add_Editor = KindEditor.create('#feedback-add-content', {
+        newlineTag:'br',
+//                                        themeType: 'simple',
+        width: "100%",
+        resizeType: 0,
+        uploadJson: "/res/image/upload.html",
+        items: ['fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+            'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+            'insertunorderedlist', '|', 'emoticons', 'image', 'link'],
+        allowFileManager: false,
+        fontsize: 16
+    });
+    KindEditor.options.cssData = "body { font-size: 15px; font-family:'Microsoft Yahei', 'Helvetica', 'Simsun', 'Arial';}";
+    root.Console.log(" KindEditor init !!! ");
+
+    layui.use('form', function() {
+        var disable = false;
+        var form = layui.form();
+        form.on
+        ("submit(save)",function(data) {
+            if(disable){
+                return false;
+            }
+            disable = true;
+            root.Console.log("submit add plan!", data.field);
+            feedback_add_Editor.sync();
+            data.field.content = feedback_add_Editor.html();
+            ajaxSetup();
+            $.post("/restapi/feedbacks", JSON.stringify(data.field), function (data) {
+                root.Console.log('done');
+            }).done(function (data) {
+                thisParent.feedbackTable.fnDraw();
+                layer.close(top.layerwin);
+            }).fail(function (data) {
+                root.Console.log(data);
+            }).always(function () {
+                disable = false;
+            });
+            return false;
+        });
+    });
+</script>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <meta name="viewport"
+          content="width=device-width, maximum-scale=1.0, initial-scale=1.0,initial-scale=1.0,user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <title>科天云客服</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?t=1487250759056"/>
+    <link rel="stylesheet" href="/js/select/css/select2.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/js/kindeditor/themes/default/default.css">
+    <link rel="stylesheet" href="/css/flexboxgrid.min.css">
+    <link rel="stylesheet" href="/assets/vendor/layui/v1/css/layui.css"  media="all">
+    <link rel="stylesheet" href="/css/datatables.css">
+    <link rel="stylesheet" href="/res/css.html">
+    <link rel="stylesheet" href="/css/flexboxgrid.min.css">
+
+    <style>
+        table dl dt, table dl dd {
+            float: left;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="layui-collapse" style="height:570px;overflow: scroll;">
+    <!--<div class="layui-form-item"  style="padding:20px;">-->
+    <table id="dt-task-candidate-list" class="table table-striped table-bordered table-hover" width="100%">
+        <thead></thead>
+        <tbody></tbody>
+    </table>
+    <!--</div>-->
+</div>
+
+<script>
+    var thisParent = top.window.frm_callplans;
+    var taskCandidateTable = undefined;
+
+    var initCandidateTable = function () {
+        taskCandidateTable = thisParent.commonDataTable({
+            "columns": [
+                {title: "电话", data: "mobile", orderable:false, render:function(data, style, full){
+                    var phone = new Array();
+                    if( full.mobile){
+                        phone.push(full.mobile);
+                    }
+                    if( full.mobilealt){
+                        phone.push(full.mobilealt);
+                    }
+                    if( full.phone){
+                        phone.push(full.phone);
+                    }
+                    if( full.phonealt){
+                        phone.push(full.phonealt);
+                    }
+
+                    return phone.join("<br>");
+                }},
+                {title: "姓名", data: "name",},
+                {title: "公司", data: "company",},
+                {title: "状态", data: "status", render:function(data, style, full){if(data === 2){ return "已完成"; }else if(data===1){ return '已分配';}else{return '未分配'}}},
+                {title: "受理人", data: "ownername"}
+            ],
+
+            "fnServerData": function (sSource, aoData, fnCallback) {
+
+                var start = 0;
+                var length = 10;
+                var columns = null;
+                var sEcho = 1;
+                var order = [];
+                $.each(aoData, function (i, item) {
+                    var name = item['name'];
+                    var value = item['value'];
+                    if (name == "start") {
+                        start = value;
+                    } else if (name == 'length') {
+                        length = value;
+                    } else if (name == 'draw') {
+                        sEcho = value;
+                    } else if (name == 'order') {
+                        order = value;
+                    } else if (name == 'columns') {
+                        columns = value;
+                    }
+                });
+
+                var orderby = columns[order[0].column].data;
+                var direction = order[0].dir;
+
+                var postData = {};
+                $.each($('#search-form input'), function (i, item) {
+                    var thisObj = $(this);
+                    postData[thisObj.attr("name")] = thisObj.val();
+                });
+                postData.orderby = orderby ? orderby : "createtime";
+                postData.direction = direction ? direction : "desc";
+                postData.ps = length ? length : 20;
+                postData.p = 1 + (start ? start / postData.ps : 0);
+
+                root.Console.log(postData);
+                $.get("/restapi/callplans/" + thisParent.planid + "/calltasks/", postData, function (data) {
+
+                    var content = data;
+                    if (!content) {
+                        content = {paging: {count: 0, limit: 10, offset: 0}};
+                    }
+                    content['sEcho'] = sEcho;
+                    content['iDisplayStart'] = content.paging.offset;
+                    content['iDisplayLength'] = content.paging.limit;
+                    content['iTotalRecords'] = content.paging.count;
+                    content['iTotalDisplayRecords'] = content.paging.count;
+                    content['sortField'] = orderby; //"createTime";
+                    content['sortType'] = direction;
+                    fnCallback(content);
+                }).done(function (data) {
+                    //log('done');
+                }).fail(function (data) {
+                    if (data.status === 403) {
+                        root.Console.log("current request need login!");
+                    }
+                }).always(function () {
+                    //log('always');
+                });
+            },
+            drawCallback: function () {
+                layui.use('form', function () {
+                    var form = layui.form();
+                    form.render(); //更新全部
+                });
+
+                layui.use('element', function () {
+                    var element = layui.element();
+                    element.init();
+                });
+            },
+            "orderby": "mobile",
+            "table": $('#dt-task-candidate-list'),
+        });
+    }
+
+    $(function () {
+        initCandidateTable();
+    });
+</script>
+</body>
+</html>

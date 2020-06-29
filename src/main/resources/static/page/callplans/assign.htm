@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <meta name="viewport"
+          content="width=device-width, maximum-scale=1.0, initial-scale=1.0,initial-scale=1.0,user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <title>科天云客服</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?t=1487250759056"/>
+    <link rel="stylesheet" href="/js/select/css/select2.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/js/kindeditor/themes/default/default.css">
+    <link rel="stylesheet" href="/css/flexboxgrid.min.css">
+    <link rel="stylesheet" href="/assets/vendor/layui/v1/css/layui.css"  media="all">
+    <link rel="stylesheet" href="/css/datatables.css">
+    <link rel="stylesheet" href="/res/css.html">
+    <link rel="stylesheet" href="/css/flexboxgrid.min.css">
+    <link rel="stylesheet" href="/assets/plugins/jstree/themes/default/style.min.css"/>
+
+    <style>
+        .div-column-layout {
+            float: left;
+            width: 100%;
+            height: 400px;
+        }
+
+        .div-column-left {
+            float: left;
+            width: 50%;
+            height: 400px;
+        }
+
+        .div-column-right {
+            width: 50%;
+            height: 400px;
+            float: right;
+
+        }
+
+        .number-input {
+            width: 50px !important;
+        }
+
+        .content-area {
+            border: 1px solid #e2e2e2;
+            border-radius: 10px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-tab layui-tab-import">
+    <ul class="layui-tab-title">
+        <li class="layui-this">自动分配</li>
+        <li onclick="initTable();initCandidateTable();">手工分配</li>
+        <li onclick="">人员设定</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <h1 class="site-h1">自动分配任务</h1>
+            <div class="uk-layui-form">
+                <div class="div-column-layout">
+                    <div class="div-column-left">
+                        <fieldset class="layui-elem-field content-area">
+                            <legend>任务设置</legend>
+                            <div class="layui-form-item layui-field-box" style="padding:20px;">
+                                <div class="layui-inline">
+                                    <div class="layui-inline">
+                                        <input type="radio" title="按每人分配数" value="0" name="assign-type">
+                                        按每人分配数
+                                        <input type="text" id="assign-type-one" name="assign-type-one" value=""
+                                               class="number-input">（个/人）
+                                    </div>
+                                    <div class="layui-inline">
+                                        <input type="radio" title="按分配总任务数" value="1" name="assign-type">
+                                        按分配总任务数<input type="text" id="assign-type-all" name="assign-type-all" value=""
+                                                      class="number-input">（个）
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <div class="div-column-right">
+                        <fieldset class="layui-elem-field content-area">
+                            <legend>人员设置</legend>
+                            <div class="layui-form-item" style="padding:20px;">
+                                <div class="layui-inline">
+                                    <div id="js_user_tree_div">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+
+                <div class="layui-form-button" style="margin-left:-12px;">
+                    <div class="layui-button-block">
+                        <button class="layui-btn" id="assign-auto-task">分配</button>
+                        <button class="layui-btn layui-btn-primary close-layerwin-window">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-tab-item">
+            <h1 class="site-h1">手工分配任务</h1>
+            <div class="uk-layui-form">
+                <div class="div-column-layout">
+                    <div class="div-column-left">
+                        <div class="content-area">
+                            <table id="dt-contacts-task" class="table table-striped table-bordered table-hover" width="100%">
+                                <thead></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="div-column-right">
+                        <div class="content-area">
+                            <table id="dt-candidate" class="table table-striped table-bordered table-hover"
+                                   width="100%">
+                                <thead></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-button" style="margin-left:-12px;">
+                    <div class="layui-button-block">
+                        <button class="layui-btn" id="assign-manul-task">分配</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        <button class="layui-btn layui-btn-primary close-layerwin-window">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-tab-item">
+            <h1 class="site-h1">请选择需要安排到当前计划的客服人员。</h1>
+            <div class="uk-layui-form">
+                <div class="layui-form-item" style="padding:20px;">
+                    <div class="layui-inline">
+                        <div id="js_auto_user_tree_div">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="layui-form-button" style="margin-left:-12px;">
+                    <div class="layui-button-block">
+                        <button class="layui-btn" id="assign-auto-candidate">保存</button>
+                        <button class="layui-btn layui-btn-primary close-layerwin-window">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/plugins/jstree/jstree.min.js"></script>
+
+<script>
+    var thisParent = top.window.frm_callplans;
+    var selectedAssignUser = undefined;
+    var selectedAutoAssignUser = undefined;
+    var js_auto_user_tree_div = 'js_auto_user_tree_div';
+    var js_user_tree_div = 'js_user_tree_div';
+    function loadAutoCandidate(){
+        $.get("/restapi/callplans/organuser", {}, function (data) {
+
+            renderNode(data, '#')
+            root.Console.log('done', data);
+
+
+            $('#' + js_auto_user_tree_div).empty();
+
+            $('#' + js_auto_user_tree_div).jstree({
+                "plugins": ["checkbox"],
+                'core': {
+                    data: data,
+                    themes: {
+                        icons: false
+                    }
+                }
+            });
+
+            $('#' + js_auto_user_tree_div).on("changed.jstree", function (e, data) {
+                root.Console.log(data.selected);
+                selectedAutoAssignUser = data.selected;
+            });
+
+        }).done(function (data) {
+            root.Console.log("submit done!");
+        }).fail(function (data) {
+            root.Console.log(data);
+        }).always(function () {
+        });
+    };
+    $.each(thisParent.callplans, function(i, item){
+        if(thisParent.planid = item.id){
+            root.Console.log(item);
+            if(item.tasktype === 0 && item.controltype === 1 ){//智能预测式外呼
+                $('.layui-tab-import ul>li:lt(2)').removeClass('layui-this').addClass("layui-hide");
+                $('.layui-tab-import ul>li:last').addClass('layui-this');
+                $('.layui-tab-import .layui-tab-content .layui-tab-item:lt(2)').removeClass('layui-show').addClass("layui-hide");
+                $('.layui-tab-import .layui-tab-content .layui-tab-item:last').addClass('layui-show');
+                loadAutoCandidate();
+            }else{
+                $('.layui-tab-import ul>li:last').addClass('layui-hide');
+                $('.layui-tab-import .layui-tab-content .layui-tab-item:last').addClass('layui-hide');
+            }
+        }
+
+        return false;
+    });
+    function renderNode(nodes, parent) {
+        $.each(nodes, function (i, item) {
+            if (item.type == 'organ') {
+                item.text = '<i class="layui-icon">&#xe622;</i>&nbsp;&nbsp;' + item.text;
+                renderNode(item.children, item.id);
+            } else {
+                item.text = '<i class="layui-icon">&#xe612;</i>&nbsp;&nbsp;' + item.text;
+            }
+            item.id = [item.type, item.id].join('-');
+        });
+    }
+    $(function () {
+        $.get("/restapi/callplans/organuser", {}, function (data) {
+
+            renderNode(data, '#')
+            root.Console.log('done', data);
+
+            $('#' + js_user_tree_div).empty();
+
+            $('#' + js_user_tree_div).jstree({
+                "plugins": ["checkbox"],
+                'core': {
+                    data: data,
+                    themes: {
+                        icons: false
+                    }
+                }
+            });
+
+            $('#' + js_user_tree_div).on("changed.jstree", function (e, data) {
+                root.Console.log(data.selected);
+                selectedAssignUser = data.selected;
+            });
+
+        }).done(function (data) {
+            root.Console.log("submit done!");
+        }).fail(function (data) {
+            root.Console.log(data);
+        }).always(function () {
+        });
+
+
+
+
+        $('#assign-auto-task').click(function () {
+            var assigntype = $('input[type=radio][name=assign-type]:checked').val();
+            var cnt = (assigntype == 0 ? $('#assign-type-one').val() : $('#assign-type-all').val());
+            var assigneduser = new Array();
+            if (selectedAssignUser) {
+                $.each(selectedAssignUser, function (i, item) {
+                    if (item.startsWith("user-")) {
+                        assigneduser.push(item.substring('user-'.length));
+                    }
+                });
+            }
+
+            var postData = {};
+            postData.type = assigntype;
+            postData.number = cnt;
+            postData.assigneduser = assigneduser;
+            root.Console.log("Auto assign:", postData);
+            $.post("/restapi/callplans/" + thisParent.planid + "/calltasks/assign/auto", JSON.stringify(postData), function (data) {
+                root.Console.log('done');
+            }).done(function (data) {
+                root.Console.log("submit done!");
+                layer.close(top.layerwin);
+            }).fail(function (data) {
+                root.Console.log(data);
+            }).always(function () {
+
+            });
+        });
+
+        $('#assign-auto-candidate').click(function () {
+            var assigneduser = new Array();
+            if (selectedAutoAssignUser) {
+                $.each(selectedAutoAssignUser, function (i, item) {
+                    if (item.startsWith("user-")) {
+                        assigneduser.push(item.substring('user-'.length));
+                    }
+                });
+            }
+
+            var postData = {};
+            postData.assigneduser = assigneduser;
+            root.Console.log("Auto assign:", postData);
+            $.post("/restapi/callplans/" + thisParent.planid + "/users", JSON.stringify(postData), function (data) {
+                root.Console.log('done');
+            }).done(function (data) {
+                root.Console.log("submit done!");
+                layer.close(top.layerwin);
+            }).fail(function (data) {
+                root.Console.log(data);
+            }).always(function () {
+
+            });
+        });
+
+        $('#dt-contacts-task').delegate('input#checkControll', 'click', function () {
+            if ($(this).is(':checked')) {
+                $('#dt-contacts-task input[type=checkbox][name!=checkControll]').prop('checked', true);
+            } else {
+                $('#dt-contacts-task input[type=checkbox][name!=checkControll]').prop('checked', false);
+            }
+        });
+    });
+
+
+    $('#assign-manul-task').click(function () {
+        var taskList = new Array();
+        $.each($('#dt-contacts-task input[type=checkbox]:checked'), function (i, item) {
+            taskList.push($(this).attr('id'));
+        });
+
+        var userid = $('#dt-candidate input[type=radio]:checked').attr('id');
+        var postData = {};
+        postData.user = userid;
+        postData.tasks = taskList;
+        postData.planid = thisParent.planid;
+
+        root.Console.log("assign task", postData);//\s
+
+        thisParent.ajaxSetup();
+        $.post("/restapi/callplans/" + thisParent.planid + "/calltasks/assign/manual", JSON.stringify(postData), function (data) {
+            root.Console.log('done');
+        }).done(function (data) {
+            root.Console.log("submit done!");
+            taskTable.fnDraw();
+            initCandidateTable();
+        }).fail(function (data) {
+            root.Console.log(data);
+        }).always(function () {
+        });
+    });
+    var candidateTable = undefined;
+    var taskTable = undefined;
+
+    var initCandidateTable = function () {
+
+        $.get("/restapi/callplans/" + thisParent.planid + "/calltasks/usertasks", {}, function (data) {
+            root.Console.log("response", data);
+
+            candidateTable = $('#dt-candidate').dataTable({
+                "destroy": true,
+                "language": datatableLanguage,
+                "columns": [
+                    {
+                        title: "",
+                        data: "uid",
+                        orderable: false,
+                        width: '1%',
+                        render: function (data, style, full) {
+                            return '<div class="layui-input-block"><input type="radio" title="" id="' + data + '" value="' + data + '" name="assigned-user"></div>';
+                        }
+                    },
+                    {title: "姓名", data: "uname",},
+                    {title: "分配", data: "assignedtask",},
+                    {title: "完成", data: "completedtask",},
+                ],
+                "data": data
+            });
+
+        }).done(function (data) {
+            //log('done');
+        }).fail(function (data) {
+            if (data.status === 403) {
+                root.Console.log("current request need login!");
+            }
+        }).always(function () {
+            //log('always');
+        });
+    }
+    var initTable = function(){
+            taskTable = thisParent.commonDataTable({
+            "columns": [
+                {
+                    title: "<nobr><input type=checkbox id='checkControll' name='checkControll'> 全选</nobr>",
+                    data: "id",
+                    orderable: false,
+                    width: '1%',
+                    render: function (data, style, full) {
+                        return '<div class="layui-input-block"><input type="checkbox" title="" id="' + data + '" name="' + data + '"></div>';
+                    }
+                },
+                {
+                    title: "电话", data: "mobile", orderable: false, render: function (data, style, full) {
+                    var phone = new Array();
+                    if (full.mobile) {
+                        phone.push(full.mobile);
+                    }
+                    if (full.mobilealt) {
+                        phone.push(full.mobilealt);
+                    }
+                    if (full.phone) {
+                        phone.push(full.phone);
+                    }
+                    if (full.phonealt) {
+                        phone.push(full.phonealt);
+                    }
+
+                    return phone.join("<br>");
+                }
+                },
+                {title: "姓名", data: "uname",},
+                {title: "公司", data: "company",},
+                {title: "受理人", data: "ownername",},
+            ],
+
+            "fnServerData": function (sSource, aoData, fnCallback) {
+
+                var start = 0;
+                var length = 10;
+                var columns = null;
+                var sEcho = 1;
+                var order = [];
+                $.each(aoData, function (i, item) {
+                    var name = item['name'];
+                    var value = item['value'];
+                    if (name == "start") {
+                        start = value;
+                    } else if (name == 'length') {
+                        length = value;
+                    } else if (name == 'draw') {
+                        sEcho = value;
+                    } else if (name == 'order') {
+                        order = value;
+                    } else if (name == 'columns') {
+                        columns = value;
+                    }
+                });
+
+                var orderby = columns[order[0].column].data;
+                var direction = order[0].dir;
+
+                var postData = {};
+                postData.orderby = orderby ? orderby : "ownername";
+                postData.direction = direction ? direction : "desc";
+                postData.ps = length ? length : 20;
+                postData.p = 1 + (start ? start / postData.ps : 0);
+
+                root.Console.log(postData);
+                $.get("/restapi/callplans/" + thisParent.planid + "/calltasks?type=uncompleted", postData, function (data) {
+
+                    var content = data;
+                    if (!content) {
+                        content = {paging: {count: 0, limit: 10, offset: 0}};
+                    }
+                    content['sEcho'] = sEcho;
+                    content['iDisplayStart'] = content.paging.offset;
+                    content['iDisplayLength'] = content.paging.limit;
+                    content['iTotalRecords'] = content.paging.count;
+                    content['iTotalDisplayRecords'] = content.paging.count;
+                    content['sortField'] = orderby; //"createTime";
+                    content['sortType'] = direction;
+                    fnCallback(content);
+                }).done(function (data) {
+                    //log('done');
+                }).fail(function (data) {
+                    if (data.status === 403) {
+                        root.Console.log("current request need login!");
+                    }
+                }).always(function () {
+                    //log('always');
+                });
+            },
+            drawCallback: function () {
+            },
+            "orderby": "ownername",
+            "table": $('#dt-contacts-task'),
+        });
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/assets/vendor/layui/v2/css/layui.css">
+    <!--<link rel="stylesheet" href="/js/bootstrap/css/bootstrap.min.css">-->
+    <!--<link rel="stylesheet" href="/js/select/css/select2.min.css"/>-->
+    <script src="/js/jquery-1.10.2.min.js"></script>
+
+    <!--<script src="/js/select/js/select2.min.js"></script>-->
+    <script src="/assets/vendor/layui/v2/layui.js"></script>
+
+    <!--<script src="/js/jquery.form.js"></script>-->
+    <!--<script type="text/javascript" src="/js/jquery.darktooltip.js"></script>-->
+    <!--<script src="/js/bootstrap/js/bootstrap.min.js"></script>-->
+</head>
+<body >
+    <div class="top-content" style="width: 100%;height: 70px;background-color: white">
+
+            <div class="layui-row">
+                <div class="layui-col-md7">
+                    <form class="layui-form" style="width: 700px;">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">学院</label>
+                            <div class="layui-input-inline">
+                                <!--select标签里面设置了lay-ignore就拿不到select的值？？？-->
+                                <select name="kkxy" id="kkxy" lay-filter="test">
+                                    <#if xylist??>
+                                        <#list xylist as key>
+                                            <option value="${key}">${key}</option>
+                                        </#list>
+                                    </#if>
+                                </select>
+                            </div>
+                            <label class="layui-form-label" style="margin-left: 20px;">专业</label>
+                            <div class="layui-input-inline" >
+                                <select name="syzy" id="syzy" lay-filter="test2">
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="layui-col-md5">
+                 <button class="layui-btn" id="loadkcxxbut" onclick="loadkcxx()">查询</button>
+                </div>
+        </div>
+    </div>
+    <div>
+        <div class="left-content" style="height: 100%;float: left;background-color: white;width: 260px;height: 560px;">
+            <table class=" layui-table" id="kcjiaocai" lay-filter="demo" style="margin-top: -10px"></table>
+            <script type="text/html" id="barDemo2">
+                <a class="layui-btn layui-btn-xs"  lay-event="editjc2">查看</a>
+            </script>
+        </div>
+        <div class="right-content" style="height: 100%;background-color: white;height: 560px;">
+            <div style="height: 220px;">
+                <table class="layui-hide" id="jconly"></table>
+            </div>
+            <div>
+                <table class="layui-hide" id="jcmany"></table>
+            </div>
+        </div>
+    </div>
+
+<script>
+    //JavaScript代码区域
+    function loadkcxx(){
+        var a = $('#kkxy').val();
+        var b = $('#syzy').val();
+        console.log("b: ",b);
+        layui.use('table', function(){
+            var table = layui.table;
+            table.render({
+                elem: '#kcjiaocai'
+                , id: 'kcjcidTest'
+                , height: 540
+                , url: '/restapi/teachtask/courseinfo'
+                , where: {
+                    syzy: b
+                }
+                , cols: [[
+//                    {type:'checkbox' ,fixed: 'left'}
+                    {field: 'kcmc', width: 120, title: '课程名称', sort: true}
+                    , {field: 'kcdm', width: 120, title: '课程代码'}
+                    , {field: 'kcxz', width: 120, title: '课程性质'}
+                    , {field: 'xf', width: 80, title: '学分'}
+                    ,{fixed: 'right', width:70, align:'center', toolbar: '#barDemo2'}
+                ]]
+            });
+
+            //监听表格复选框选择
+            table.on('checkbox(demo)', function(obj){
+                console.log(obj)
+            });
+            //监听工具条
+            table.on('tool(demo)', function(obj){
+                var data = obj.data;
+                if(obj.event === 'deljc'){
+                } else if(obj.event === 'editjc2'){
+                    console.log("data: ",data);
+                    var kcdmchoose = data.kcdm;
+                    var xkkhchoose = data.xkkh;
+                    console.log("kcdmchoose: ",kcdmchoose);
+                    //点击查看的时候监听变化刷新表格
+                    layui.use('table', function(){
+                        var table = layui.table;
+
+                        table.render({
+                            elem: '#jconly'
+                            ,url:'/restapi/coursejc/find/'
+                            ,where: {
+                                kcdm: kcdmchoose
+                            }
+                            ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                            ,cols: [[
+                                {field: 'sxh', width: 80, title: '顺序号', sort: true}
+                                , {field: 'jcmc', width: 200, title: '教材名称'}
+                                , {field: 'jczz', width: 120, title: '作者'}
+                                , {field: 'bbh', width: 80, title: '版本号'}
+                                , {field: 'cbs', width: 160, title: '出版社'}
+                                , {field: 'price', width: 80, title: '价格'}
+                                , {field: 'bzsh', width: 180, title: '标准书号'}
+                                , {field: 'mrzk', width: 100, title: '默认折扣'}
+                            ]]
+                        });
+                        ///restapi/termtakeplan/historyjc  kcdmchoose
+                        table.render({
+                            elem: '#jcmany'
+                            //,url:'/restapi/termbookplan/historyJcxx'
+                            ,url:'/restapi/termtakeplan/historyjc'
+                            ,where: {
+                                //xkkh: xkkhchoose
+                                kkxy: a,
+                                syzy: b,
+                                kcdm: kcdmchoose
+                            }
+                            ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                            ,cols: [[
+                                {field: 'xn', width: 110, title: '学年', sort: true}
+                                , {field: 'xq', width: 80, title: '学期'}
+                                , {field: 'jcmc', width: 220, title: '教材名称'}
+                                , {field: 'jczz', width: 120, title: '作者'}
+                                , {field: 'bbh', width: 80, title: '版本号'}
+                                , {field: 'cbs', width: 160, title: '出版社'}
+                                , {field: 'price', width: 80, title: '价格'}
+                                , {field: 'jcsxh', width: 80, title: '教材号'}
+                                , {field: 'sh', width: 100, title: '审核状态'}
+                            ]]
+                        });
+                    });
+                }
+            });
+
+            var $ = layui.$, active = {
+                getCheckData: function(){ //获取选中数据
+                    var checkStatus = table.checkStatus('kcjcidTest')
+                        ,data = checkStatus.data;
+                    layer.alert(JSON.stringify(data));
+                }
+                ,getCheckLength: function(){ //获取选中数目
+                    var checkStatus = table.checkStatus('kcjcidTest')
+                        ,data = checkStatus.data;
+                    layer.msg('选中了：'+ data.length + ' 个');
+                }
+                ,isAll: function(){ //验证是否全选
+                    var checkStatus = table.checkStatus('kcjcidTest');
+                    layer.msg(checkStatus.isAll ? '全选': '未全选')
+                }
+                ,reload: function(){
+                    //执行重载
+                    console.log("reload!!");
+                    table.reload('kcjcidTest', {
+                        page: {
+                            curr: 1 //重新从第 1 页开始
+                        }
+                        ,where: {
+                            key: {
+                                type: "all"
+                            }
+                        }
+                    });
+                }
+            };
+
+            $('.demoTable .layui-btn').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+        });
+    }
+    layui.use(['element','form','layer'], function(){
+        var layer = layui.layer
+            ,element = layui.element
+            ,$=layui.jquery
+            ,form = layui.form;
+
+        form.on('select(test)', function(data){
+            console.log(data);
+            $.ajax({
+                        type: 'get',
+                        url: '/restapi/termtakeplan/xyzy',
+                        data: {
+                            kkxy: data.value,
+                            syzy: data.value
+                        },
+                        dataType:  'json',
+                        success: function(data){
+                            //先清空选项再append上去
+                            $("#syzy").html("");
+                            $.each(data, function(key, val) {
+                        //console.log("val: ",val);
+                        $('#syzy').append('<option value="' + val + '">' + val + '</option>');
+                        form.render('select');
+                    });
+                    $("#syzy").get(0).selectedIndex=0;
+                }
+            });
+        });
+
+    });
+
+    $(function(){
+        $('#loadkcxxbut').click();
+    })
+</script>
+</body>
+</html>

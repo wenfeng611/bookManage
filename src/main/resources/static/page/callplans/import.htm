@@ -1,0 +1,233 @@
+
+<div class="layui-tab layui-tab-import">
+    <ul class="layui-tab-title">
+        <li class="layui-this" onclick="">直接录入</li>
+        <li>用模板文件导入</li>
+        <li onclick="initCandidateTable(); initAddContactForm();">从联系人导入</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <h1 class="site-h1">通过直接录入外呼号码来上传任务</h1>
+            <div class="uk-layui-form">
+
+                <div class="layui-collapse" style="height:380px;">
+                    <div class="layui-form-item" style="padding:20px;">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">输入号码：</label>
+                            <div class="layui-input-inline">
+                                <textarea name="phonelist" id="phonelist" placeholder="请输入号码，每个号码为一行"
+                                          class="layui-textarea" style="height:360px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-button" style="margin-left:-12px;">
+                    <div class="layui-button-block">
+                        <button class="layui-btn" id="add-input-task">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        <button class="layui-btn layui-btn-primary close-layerwin-window">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-tab-item">
+            <h1 class="site-h1">通过上传Excel来导入数据（点击下载模板文件<a href="/page/template/任务导入模板.xlsx">任务导入模板.xlsx</a>，请按照模板文件定义的格式来上传外呼任务）
+            </h1>
+            <div class="uk-layui-form">
+
+                <div class="layui-collapse" style="height:380px;">
+
+                    <div class="layui-form-item" style="padding:20px;">
+                        <iframe src="/page/callplans/importframe.htm" width="100%" height="100%" scrolling="no" frameborder="0" style="overflow:hidden;"></iframe>
+                    </div>
+                </div>
+                <div class="layui-form-button" style="margin-left:-12px;">
+                    <div class="layui-button-block">
+                        <button class="layui-btn layui-btn-primary close-layerwin-window">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-tab-item">
+            <h1 class="site-h1">从联系人列表选择用户导入数据</h1>
+            <div class="uk-layui-form">
+
+
+                <div class="layui-collapse" style="height:380px;">
+                    <!--<div class="layui-form-item"  style="padding:20px;">-->
+                    <table id="dt-task-candidate" class="table table-striped table-bordered table-hover" width="100%">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                    <!--</div>-->
+                </div>
+
+                <div class="layui-form-button" style="margin-left:-12px;">
+                    <div class="layui-button-block">
+                        <button class="layui-btn" id="add-contact-task">导入</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        <button class="layui-btn layui-btn-primary  close-layerwin-window">关闭</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var thisParent = top.window.frm_callplans;
+
+    $('#add-input-task').click(function () {
+        var phoneList = $('#phonelist').val().split(/\n|\r|,|，|；|;/);
+        thisParent.ajaxSetup();
+        root.Console.log("phoneList", phoneList, "planid:", thisParent.planid);//\s
+        $.post("/restapi/callplans/" + thisParent.planid + "/calltasks/addphones", JSON.stringify(phoneList), function (data) {
+            root.Console.log('done');
+        }).done(function (data) {
+            root.Console.log("submit done!");
+            thisParent.planListTable.fnDraw();
+            top.layer.msg("导入成功");
+            top.layer.close(top.layerwin);
+
+        }).fail(function (data) {
+            root.Console.log(data);
+        }).always(function () {
+        });
+    });
+
+    $('#add-contact-task').click(function () {
+        var contactList = new Array();
+        $.each($('input[type=checkbox][name!=checkControll]'), function (i, item) {
+            if ($(this).is(':checked')) {
+                contactList.push($(this).attr('name'));
+            }
+        });
+        thisParent.ajaxSetup();
+        root.Console.log("add contactList", contactList, "planid:", thisParent.planid);//\s
+        $.post("/restapi/callplans/" + thisParent.planid + "/calltasks/addcontacts", JSON.stringify(contactList), function (data) {
+            root.Console.log('done');
+        }).done(function (data) {
+            root.Console.log("submit done!");
+            thisParent.planListTable.fnDraw();
+            top.layer.msg("导入成功");
+            top.layer.close(top.layerwin);
+
+        }).fail(function (data) {
+            root.Console.log(data);
+        }).always(function () {
+        });
+    });
+    var taskCandidateTable = undefined;
+
+    var initCandidateTable = function () {
+        taskCandidateTable = thisParent.commonDataTable({
+            "columns": [
+                {
+                    title: "<nobr><input type=checkbox id='checkControll' name='checkControll'> 全选</nobr>",
+                    data: "id",
+                    orderable: false,
+                    width: '1%',
+                    render: function (data, style, full) {
+                        return '<div class="layui-input-block"><input type="checkbox" title="" id="' + data + '" name="' + data + '"></div>';
+                    }
+                },
+                {title: "电话号码", data: "mobile"},
+                {title: "姓名", data: "name",},
+                {title: "公司", data: "company",},
+            ],
+
+            "fnServerData": function (sSource, aoData, fnCallback) {
+
+                var start = 0;
+                var length = 10;
+                var columns = null;
+                var sEcho = 1;
+                var order = [];
+                $.each(aoData, function (i, item) {
+                    var name = item['name'];
+                    var value = item['value'];
+                    if (name == "start") {
+                        start = value;
+                    } else if (name == 'length') {
+                        length = value;
+                    } else if (name == 'draw') {
+                        sEcho = value;
+                    } else if (name == 'order') {
+                        order = value;
+                    } else if (name == 'columns') {
+                        columns = value;
+                    }
+                });
+
+                var orderby = columns[order[0].column].data;
+                var direction = order[0].dir;
+
+                var postData = {};
+                $.each($('#search-form input'), function (i, item) {
+                    var thisObj = $(this);
+                    postData[thisObj.attr("name")] = thisObj.val();
+                });
+                postData.orderby = orderby ? orderby : "createtime";
+                postData.direction = direction ? direction : "desc";
+                postData.ps = length ? length : 20;
+                postData.p = 1 + (start ? start / postData.ps : 0);
+
+                root.Console.log(postData);
+                $.get("/restapi/contacts", postData, function (data) {
+
+                    var content = data;
+                    if (!content) {
+                        content = {paging: {count: 0, limit: 10, offset: 0}};
+                    }
+                    content['sEcho'] = sEcho;
+                    content['iDisplayStart'] = content.paging.offset;
+                    content['iDisplayLength'] = content.paging.limit;
+                    content['iTotalRecords'] = content.paging.count;
+                    content['iTotalDisplayRecords'] = content.paging.count;
+                    content['sortField'] = orderby; //"createTime";
+                    content['sortType'] = direction;
+                    fnCallback(content);
+                }).done(function (data) {
+                    //log('done');
+                }).fail(function (data) {
+                    if (data.status === 403) {
+                        root.Console.log("current request need login!");
+                    }
+                }).always(function () {
+                    //log('always');
+                });
+            },
+            drawCallback: function () {
+                layui.use('form', function () {
+                    var form = layui.form();
+                    form.render(); //更新全部
+                });
+
+                layui.use('element', function () {
+                    var element = layui.element();
+                    element.init();
+                });
+            },
+            "orderby": "mobile",
+            "table": $('#dt-task-candidate'),
+        });
+    }
+
+    layui.use(['form', 'element' ], function () {
+        var form = layui.form();
+        form.render();
+        var element = layui.element();
+        element.init();
+    });
+
+    $(function () {
+        $('#dt-task-candidate').delegate('input#checkControll', 'click', function () {
+            if ($(this).is(':checked')) {
+                $('input[type=checkbox][name!=checkControll]').prop('checked', true);
+            } else {
+                $('input[type=checkbox][name!=checkControll]').prop('checked', false);
+            }
+        });
+    });
+</script>

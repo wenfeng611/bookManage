@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <meta name="viewport"
+          content="width=device-width, maximum-scale=1.0, initial-scale=1.0,initial-scale=1.0,user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <title>科天云客服</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?t=1487250759056"/>
+    <link rel="stylesheet" href="/js/select/css/select2.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/js/kindeditor/themes/default/default.css">
+    <link rel="stylesheet" href="/css/flexboxgrid.min.css">
+    <link rel="stylesheet" href="/assets/vendor/layui/v1/css/layui.css">
+    <link rel="stylesheet" href="/css/datatables.css">
+    <link rel="stylesheet" href="/res/css.html">
+    <link rel="stylesheet" href="/css/flexboxgrid.min.css">
+    <style>
+        table dl dt, table dl dd{float:left;margin-left:10px;}
+    </style>
+</head>
+
+<body>
+<div class="layui-layout layui-layout-content layui-hide">
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <ul class="layui-nav layui-nav-tree" lay-filter="setting">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="layui-nav-title" href="javascript:;">我的外呼任务</a>
+                    <dl class="layui-nav-child kty-nav-child mytask-left-nav">
+
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="layui-body">
+        <div class="layui-side-scroll">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="site-h12 ukefu-tab" style="border-top:1px solid #e6e6e6;height:26px;">
+					<span class="ukefu-bt">
+						<i class="layui-icon ukewo-btn" style="font-size:20px;"></i>
+						<div class="ukefu-bt-text">
+							<div class="ukefu-bt-text-title">
+								全部任务
+							</div>
+						</div>
+					</span>
+                        <div class="ukefu-tab-title">
+                            <ul class="tab-title myplan-top-nav">
+                                <li class="layui-this"><a class="mytask-all">全部任务</a></li>
+                                <li><a class="today-mytask">今日新增</a></li>
+                                <li><a class="week-mytask">本周新增</a></li>
+                            </ul>
+                        </div>
+                        <div class="ukefu-bt-text-content"
+                             style="position: absolute;right: 5px;top: 0px;padding-right:10px;">
+                            <form class="layui-form" id="search-form"
+                                  style="float: left;">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="q" value=""
+                                                   style="height: 30px;line-height: 30px;border: 1px solid #32c24d;"
+                                                   placeholder="请输入查询条件" autocomplete="off" class="layui-input">
+                                            <i class="layui-icon" onclick="tableName.fnDraw();"
+                                               style="position: absolute;cursor: pointer;right: 3px;top: 4px;font-size: 20px;color:#32c24d;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" value="" name="status" id="status"/>
+                            </form>
+                        </div>
+                    </h1>
+                    <div id="main-kf-active-content">
+                        <div class="uk-layui-form">
+                            <table id="dt_task_basic" class="table table-striped table-bordered table-hover" width="100%">
+                                <input type="hidden" name="planid" id="planid" value="">
+                                <thead></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/jquery-1.10.2.min.js"></script>
+<script src="/js/jquery.form.js"></script>
+<script src="/js/jquery.hotkeys.min.js"></script>
+
+<script src="/js/select/js/select2.min.js"></script>
+<script src="/js/select/js/i18n/zh-CN.js"></script>
+
+<script src="/assets/vendor/layui/v1/layui.js"></script>
+<script src="/js/ukefu.js"></script>
+<script type="text/javascript" src="/js/kindeditor/kindeditor-min.js"></script>
+<script type="text/javascript" src="/js/kindeditor/lang/zh-CN.js"></script>
+<script src="/js/template.js"></script>
+
+<script src="/js/weixinAudio.js"></script>
+<script src="/js/echarts.common.min.js"></script>
+<script language="javascript" src="/js/theme/wonderland.js"></script>
+<script src="/js/datatables/jquery.dataTables.min.js"></script>
+<script src="/js/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/js/datatable-responsive/datatables.responsive.min.js"></script>
+<script src="/js/datatables/dataTables.tableTools.min.js"></script>
+<script src="/js/datatables/dataTables.colVis.min.js"></script>
+<script src="/js/active-content.js"></script>
+<script>
+
+    var planid = undefined;
+    var listtype = '';
+    var status = '';
+    var taskListTable = undefined;
+    root.Console.log("top window", top);
+    function initMenu() {
+        $.get("/restapi/callplan/mine", {}, function (data) {
+            root.Console.log('done', data);
+            var callplans = new Array();
+            var assigned = 0;
+            var completedtask = 0;
+            $.each(data, function(i, item){
+                assigned = assigned + item.assingedtask;
+                completedtask = completedtask + item.completedtask;
+                callplans.push(["<dd><a planid='", item.id, "'>", htmlEncode(item.name), " (" , item.assingedtask, "/", item.assingedtask-item.completedtask, ")</a></dd>"].join(''));
+            });
+            //<dd><a planid="" class="feedback-all">全部计划</a></dd>
+            $('.mytask-left-nav').append('<dd><a planid="" class="feedback-all">全部计划 (' + assigned + '/' + (assigned-completedtask) + ')</a></dd>').append(callplans.join(''));
+        }).done(function (data) {
+            root.Console.log("submit done!");
+        }).fail(function (data) {
+            root.Console.log(data);
+        }).always(function () {
+        });
+
+        $('.mytask-left-nav').delegate('a[planid]', 'click', function() {
+            planid = $(this).attr('planid');
+            initTable();
+            root.Console.log("planid", planid);
+        });
+
+        $('.myplan-top-nav').delegate('a', 'click', function() {
+            var thisObj = $(this);
+            if (thisObj.hasClass("mytask-all")) {
+                listtype = '';
+            } else if (thisObj.hasClass("today-mytask")) {
+                listtype = 'today';
+            } else if (thisObj.hasClass("week-mytask")) {
+                listtype = 'week';
+            }
+
+            $('.ukefu-tab-title .tab-title li').removeClass('layui-this');
+            thisObj.parent().addClass('layui-this');
+            initTable();
+            root.Console.log('listtype:', listtype);
+        });
+
+    };
+
+    function initTable() {
+        $.get("/restapi/callplan/mine/tasks", {planid:planid,listtype:listtype}, function (data) {
+            root.Console.log("response", data);
+
+            taskListTable = $('#dt_task_basic').dataTable({
+                destroy: true,
+                "language": datatableLanguage,
+                "columns": [
+                    {
+                        title: "电话", data: "mobile", orderable: false, render: function (data, style, full) {
+                        var phone = new Array();
+                        if (full.mobile) {
+                            phone.push('<a href="javascript:openPhonePanel(\'' + htmlEncode(full.mobile) + '\');">' + htmlEncode(full.mobile) + '</a>');
+                        }
+                        if (full.mobilealt) {
+                            phone.push('<a href="javascript:openPhonePanel(\'' + htmlEncode(full.mobilealt) + '\');">' + htmlEncode(full.mobilealt) + '</a>');
+                        }
+                        if (full.phone) {
+                            phone.push('<a href="javascript:openPhonePanel(\'' + htmlEncode(full.phone) + '\');">' + htmlEncode(full.phone) + '</a>');
+                        }
+                        if (full.phonealt) {
+                            phone.push('<a href="javascript:openPhonePanel(\'' + htmlEncode(full.phonealt) + '\');">' + htmlEncode(full.phonealt) + '</a>');
+                        }
+
+                        return phone.join("<br>");
+                    }
+                    },
+                    {title: "姓名", data: "uname",},
+                    {title: "公司", data: "company",},
+                    {title: "状态", data: "status", render: function(data, style, full){return data==2?'<span class="highlight-green">已完成</span>':'未完成'}},
+                    {title: "结果", data: "result",},
+                ],
+                "data": data
+            });
+
+        }).done(function (data) {
+            //log('done');
+        }).fail(function (data) {
+            if (data.status === 403) {
+                root.Console.log("current request need login!");
+            }
+        }).always(function () {
+            //log('always');
+        });
+    }
+
+    ajaxSetup();
+
+
+    $(function(){
+        initMenu();
+        initTable();
+        $('.layui-layout-content.layui-hide').removeClass("layui-hide");
+    });
+</script>
+</body>
+</html>

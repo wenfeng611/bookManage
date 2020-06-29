@@ -1,0 +1,93 @@
+<div class="uk-layui-form">
+    <form class="layui-form">
+        <div class="layui-collapse">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">反馈内容<span class="required">（* 表示必填项）</span></h2>
+                <div class="layui-colla-content layui-show feedback-form">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label"><span class="required">* </span>反馈问题：</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="title" id="title" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">问题描述：</label>
+                            <div class="layui-input-inline" style="width:520px;">
+                                <textarea name="content" id="content" placeholder="请输入内容" class="layui-textarea"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-button">
+            <div class="layui-button-block">
+                <button class="layui-btn layui-hide" lay-submit="" lay-filter="addFeedback">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                <button class="layui-btn layui-btn-primary close-layerwin-window">关闭</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="/js/active-content.js"></script>
+<script>
+
+    var thisParent = top.window.frm_feedback;
+
+    function loadData(){
+        $.get("/restapi/feedbacks/" + thisParent.feedbackid, {}, function (data) {
+            thisParent.root.Console.log('done', data);
+            $.each($('.feedback-form input[type=text], .feedback-form textarea'), function(i, item){
+                $(this).val(data[$(this).attr('id')]);
+            });
+        }).done(function (data) {
+            thisParent.root.Console.log("submit done!");
+        }).fail(function (data) {
+            thisParent.root.Console.log(data);
+        }).always(function () {
+        });
+    }
+
+    $(function() {
+
+//        $('.close-layerwin-window').click(function () {
+//            thisParent.layer.close(top.layerwin);
+//        });
+
+        loadData();
+        layui.use('element', function () {
+            var element = layui.element();
+        });
+
+        layui.use('form', function() {
+            var form = layui.form();
+            form.render(); //更新全部
+            form.on
+            (
+                "submit(addFeedback)", function (data) {
+                    thisParent.root.Console.log("submit add plan!", data.field);
+                    var loading = layer.load();
+                    thisParent.root.Console.log('submit');
+                    ajaxSetup();
+                    $.put("/restapi/feedbacks/" + thisParent.feedbackid, JSON.stringify(data.field), function (data) {
+                        thisParent.root.Console.log('done');
+                    }).done(function (data) {
+                        thisParent.root.Console.log("submit done!");
+                        thisParent.feedbackListTable.fnDraw();
+                        layer.close(top.layerwin);
+                    }).fail(function (data) {
+                        thisParent.root.Console.log(data);
+                    }).always(function () {
+                        layer.close(loading);
+                    });
+                    return false;
+                })
+            ;
+        });
+
+    });
+
+</script>
